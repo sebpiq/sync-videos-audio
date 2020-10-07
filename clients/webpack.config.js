@@ -4,7 +4,8 @@ module.exports = {
     mode: 'none',
     entry: {
         'client-video': './src/client-video.ts',
-        'client-audio': './src/client-audio.ts'
+        'client-audio': './src/client-audio/index.ts',
+        'worklet-playback-node': './src/client-audio/worklet-playback-node.ts'
     },
     module: {
         rules: [
@@ -19,6 +20,6 @@ module.exports = {
         extensions: [ '.tsx', '.ts', '.js' ],
     },
     output: {
-        path: path.resolve(__dirname, '..', 'build'),
+        path: path.resolve(__dirname, '..', 'html', 'build'),
     },
 }

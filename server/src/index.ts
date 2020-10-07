@@ -8,12 +8,10 @@ import config from './config'
 
 const createWebSocketServer = async () => {
     const webSocketServer = new WebSocket.Server({ server: state.get().httpServer })
-    webSocketServer.on('connection', function connection(ws) {
-        ws.on('message', function incoming(message) {
-            console.log('received: %s', message);
+    webSocketServer.on('connection', (webSocket) =>  {
+        webSocket.on('message', (messageStr: string) => {
+            webSocketServer.clients.forEach((otherWebSocket) => otherWebSocket.send(messageStr))
         })
-      
-        ws.send('something 23456')
     })
     return webSocketServer
 }

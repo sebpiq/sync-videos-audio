@@ -20,7 +20,7 @@ const main = async () => {
     const startTick = (videoElement: HTMLVideoElement) => {
         const webSocket = state.get().webSocket
         setInterval(() => {
-            ws.send({type: 'tick', payload: videoElement.currentTime})
+            ws.send({type: 'tick', payload: {currentTime: videoElement.currentTime}})
         }, 1000)
     }
     

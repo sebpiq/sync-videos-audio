@@ -1,11 +1,11 @@
+import { Message } from "./shared/websocket-messages"
 import state from "./state"
 
-interface TickMessage {
-    type: 'tick'
-    payload: any
-}
+type MessageListener = (message: Message) => void
 
-type Message = TickMessage
+const messageListeners = {
+    'tick': [] as Array<MessageListener>
+}
 
 const open = async (url: string): Promise<WebSocket> => {
     const webSocket = new WebSocket(url)
@@ -16,7 +16,8 @@ const open = async (url: string): Promise<WebSocket> => {
         }
         webSocket.onerror = (error) => reject(error)
         webSocket.onmessage = (msg) => {
-            console.log(`webSocket msg : ${msg.data}`)
+            const message: Message = JSON.parse(msg.data)
+            messageListeners[message.type].forEach(listener => listener(message))
         }
     })
 }
@@ -25,4 +26,8 @@ const send = async (message: Message) => {
     state.get().webSocket.send(JSON.stringify(message))
 }
 
-export default { open, send }
+const listen = async <M extends Message>(messageType: M["type"], callback: (message: M) => void) => {
+    messageListeners[messageType].push(callback)
+}
+
+export default { open, send, listen }

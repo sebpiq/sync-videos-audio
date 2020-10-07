@@ -14,10 +14,16 @@ type ActionTypes = SetValue
 // ----------------- State --------------- //
 interface State {
     webSocket: WebSocket | null
+    audio: {
+        context: AudioContext
+        playbackNode: AudioWorkletNode
+        audioBuffer: AudioBuffer
+    } | null
 }
 
 const initialState: State = {
-    webSocket: null
+    webSocket: null,
+    audio: null
 }
 
 // ---------------- Reducer -------------- //
