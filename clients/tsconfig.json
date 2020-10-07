@@ -1,10 +1,21 @@
 {
     "compilerOptions": {
-        "outDir": "./dist/",
+        "outDir": "../build",
         "noImplicitAny": true,
         "module": "es6",
         "target": "es5",
+        "moduleResolution": "node",
         "allowJs": true,
-        "lib": [ "es2016", "dom" ]
-    }
+        "lib": [ "es2016", "dom" ],
+        "sourceMap": true,
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "node_modules/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*"
+    ]
 }

@@ -1,13 +1,9 @@
-import {openWebSocket} from './websocket'
-import State from './shared/State'
+import config from './config'
+import state from './state'
+import ws from './websocket'
 
 const main = async () => {
-    const state = new State({
-        webSocket: null
-    })
-    
-    const webSocket = await openWebSocket()
-    state.set('webSocket', webSocket)
+    await ws.open(config.webSocket.url)
 
     const videoElement: HTMLVideoElement = document.querySelector('#video')
     const startButton: HTMLButtonElement = document.querySelector('#start')
@@ -22,8 +18,9 @@ const main = async () => {
     }
     
     const startTick = (videoElement: HTMLVideoElement) => {
+        const webSocket = state.get().webSocket
         setInterval(() => {
-            console.log(videoElement.currentTime)
+            ws.send({type: 'tick', payload: videoElement.currentTime})
         }, 1000)
     }
     
@@ -32,7 +29,7 @@ const main = async () => {
 
 main()
     .then(() => {
-        console.log(`websocket open`)
+        console.log(`client started`)
     })
     .catch((error) => {
         console.error(error)

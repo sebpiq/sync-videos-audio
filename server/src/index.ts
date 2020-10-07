@@ -2,23 +2,12 @@ import WebSocket from 'ws'
 import Koa from 'koa'
 import koaStatic from 'koa-static'
 import http from 'http'
-import path from 'path'
 import { once } from 'events'
-import State from './shared/State'
-
-const config = {
-    ROOT_DIR: path.resolve(__dirname, '../..'),
-    SERVER_PORT: 3000
-}
-
-const state = new State({
-    httpServer: null,
-    koaApp: null,
-    webSocketServer: null, 
-})
+import state from './state'
+import config from './config'
 
 const createWebSocketServer = async () => {
-    const webSocketServer = new WebSocket.Server({ server: state.get('httpServer') })
+    const webSocketServer = new WebSocket.Server({ server: state.get().httpServer })
     webSocketServer.on('connection', function connection(ws) {
         ws.on('message', function incoming(message) {
             console.log('received: %s', message);
@@ -30,13 +19,13 @@ const createWebSocketServer = async () => {
 }
 
 const createHttpServer = async () => {
-    const server = http.createServer(state.get('koaApp').callback())
+    const server = http.createServer(state.get().koaApp.callback())
     return server
 }
 
 const startHttpServer = async () => {
-    state.get('httpServer').listen(config.SERVER_PORT)
-    await once(state.get('httpServer'), 'listening')    
+    state.get().httpServer.listen(config.SERVER_PORT)
+    await once(state.get().httpServer, 'listening')    
 }
 
 const createKoaApp = async () => {
@@ -46,9 +35,9 @@ const createKoaApp = async () => {
 }
 
 const main = async () => {
-    state.set('koaApp', await createKoaApp())
-    state.set('httpServer', await createHttpServer())
-    state.set('webSocketServer', await createWebSocketServer())
+    state.set({ koaApp: await createKoaApp() })
+    state.set({ httpServer: await createHttpServer() })
+    state.set({ webSocketServer: await createWebSocketServer() })
     return startHttpServer()   
 }
 
