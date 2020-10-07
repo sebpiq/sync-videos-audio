@@ -1,15 +1,6 @@
 import state from "../state"
 import config from "../config"
-
-class PlaybackWorkletNode extends AudioWorkletNode {
-    constructor(context: AudioContext, audioBuffer: AudioBuffer) {
-        super(context, 'playback-node', { numberOfInputs: 0, numberOfOutputs: 1, outputChannelCount: [1] })
-
-        const anotherArray = new Float32Array(audioBuffer.length);
-        audioBuffer.copyFromChannel(anotherArray,0,0);
-        this.port.postMessage(anotherArray)
-    }
-}
+import PlaybackNodeWorklet, { PlaybackNodeWorkletType } from "./PlaybackNode/PlaybackNodeWorklet";
 
 const loadSound = async (context: AudioContext, url: string): Promise<AudioBuffer> => {
     const request = new XMLHttpRequest();
@@ -27,14 +18,14 @@ const loadSound = async (context: AudioContext, url: string): Promise<AudioBuffe
 const load = async (soundUrl: string): Promise<void> => {
     const context = new AudioContext()
     const audioBuffer = await loadSound(context, soundUrl)
-    await context.audioWorklet.addModule(`${config.jsRoot}/worklet-playback-node.js`)
+    await context.audioWorklet.addModule(`${config.jsRoot}/PlaybackNodeProcessor.js`)
     state.set({audio: {...state.get().audio, context, audioBuffer}})
 }
 
 const start = async () => {
     const {context, audioBuffer} = state.get().audio
     context.resume()
-    const playbackNode = new PlaybackWorkletNode(context, audioBuffer)
+    const playbackNode = (new PlaybackNodeWorklet(context, audioBuffer)) as PlaybackNodeWorkletType
     playbackNode.connect(context.destination)
     state.set({audio: {...state.get().audio, playbackNode}})
 }

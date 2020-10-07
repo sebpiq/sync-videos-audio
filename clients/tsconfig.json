@@ -6,7 +6,7 @@
         "target": "es6",
         "moduleResolution": "node",
         "allowJs": true,
-        "lib": [ "es2016", "dom" ],
+        "lib": [ "es2017", "dom" ],
         "sourceMap": true,
         "baseUrl": ".",
         "paths": {

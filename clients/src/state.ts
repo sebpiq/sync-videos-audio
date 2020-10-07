@@ -1,4 +1,5 @@
 import { createStore } from "redux"
+import { PlaybackNodeWorkletType } from "./client-audio/PlaybackNode/PlaybackNodeWorklet"
 
 // ------------- Action Types ------------ //
 const SET_VALUES =
@@ -16,7 +17,7 @@ interface State {
     webSocket: WebSocket | null
     audio: {
         context: AudioContext
-        playbackNode: AudioWorkletNode
+        playbackNode: PlaybackNodeWorkletType
         audioBuffer: AudioBuffer
     } | null
 }

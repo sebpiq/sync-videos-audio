@@ -5,7 +5,7 @@ module.exports = {
     entry: {
         'client-video': './src/client-video.ts',
         'client-audio': './src/client-audio/index.ts',
-        'worklet-playback-node': './src/client-audio/worklet-playback-node.ts'
+        'PlaybackNodeProcessor': './src/client-audio/PlaybackNode/PlaybackNodeProcessor.ts'
     },
     module: {
         rules: [
