@@ -1,6 +1,6 @@
 export default {
     webSocket: {
-        url: 'ws://localhost:3000/'
+        url: location ? `ws://${location.host}/` : 'location not available in worker'
     },
     jsRoot: '/build',
     audio: {

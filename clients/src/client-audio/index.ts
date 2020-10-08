@@ -32,6 +32,3 @@ main()
     .then(() => {
         console.log(`client started`)
     })
-    .catch((error) => {
-        console.error(error)
-    })

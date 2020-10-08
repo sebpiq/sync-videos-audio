@@ -7,10 +7,9 @@ export default class PlaybackNodeWorklet extends AudioWorkletNode {
         const anotherArray = new Float32Array(audioBuffer.length);
         audioBuffer.copyFromChannel(anotherArray,0,0)
 
-        const self: PlaybackNodeWorkletType = Object.assign(this, Methods)
+        const node: PlaybackNodeWorkletType = Object.assign(this, Methods)
         // Object.entries(Methods).forEach(([methodName, func]) => (this as any)[methodName] = func)
-        self._constructor(anotherArray)
-        return self
+        node._constructor(anotherArray)
     }
 }
 

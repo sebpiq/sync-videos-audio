@@ -4,5 +4,6 @@ module.exports = {
     ...webpackBase,
     output: {
         filename: '[name].[contentHash].bundle.js'
-    }
+    },
+    mode: 'production'
 }
