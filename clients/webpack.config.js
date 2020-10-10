@@ -20,6 +20,6 @@ module.exports = {
         extensions: [ '.tsx', '.ts', '.js' ],
     },
     output: {
-        path: path.resolve(__dirname, '..', 'html', 'build'),
+        path: path.resolve(__dirname, '..', 'www', 'build'),
     },
 }
