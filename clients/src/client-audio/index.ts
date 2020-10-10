@@ -1,30 +1,32 @@
+import * as pEvent from 'p-event'
+import DelayButtons from '../components/DelayButtons'
+import { addStartButton } from '../components/StartButton'
 import config from '../config'
 import { TickMessage } from '../shared/websocket-messages'
 import state from '../state'
 import ws from '../websocket'
 import audio from './audio'
 
-const addStartButton = () => {
-    const button = document.createElement('button')
-    button.innerText = 'START'
-    document.body.appendChild(button)
-    return button
-}
-
-const startClicked = async (startButton: HTMLButtonElement) => {
-    return new Promise((resolve) => {
-        startButton.onclick = resolve
-    })
-}
-
 const main = async () => {
     await ws.open(config.webSocket.url)
-    await audio.load('/media/Big_Buck_Bunny_small.mp3')
+    await audio.load('/media/audio.mp3')
+    
     const startButton = addStartButton()
-    await startClicked(startButton)
+    await pEvent(startButton, 'click')
     await audio.start()
-    ws.listen("tick", (message: TickMessage) => {
-        state.get().audio.playbackNode.setCurrentTime(message.payload.currentTime)
+    
+    const message: TickMessage = await pEvent(ws.events, 'tick')
+    state.refreshSyncState(message.payload.currentTime)
+    state.get().audio.playbackNode.setCurrentTime(message.payload.currentTime)
+    
+    DelayButtons(document.body)
+    state.subscribe(() => {
+        const stateValues = state.get()
+        const {delayMs: delaySeconds, readPositionMs, timestampMs: timestamp} = stateValues.syncState
+        // TODO: Do this calculation in the worklet processor for exactness (+ timestamp should be context time)
+        const currentTime = readPositionMs + (Date.now() - timestamp) + delaySeconds
+        console.log(delaySeconds, readPositionMs, timestamp, currentTime)
+        stateValues.audio.playbackNode.setCurrentTime(currentTime)
     })
 }
 

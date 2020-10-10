@@ -20,8 +20,8 @@ const Methods = {
         this._postMessage({audioArrays: [anotherArray]})
     },
 
-    setCurrentTime(time: number) {
-        const readPosition = Math.round(time * this.context.sampleRate)
+    setCurrentTime(timeMs: number) {
+        const readPosition = Math.round(timeMs / 1000 * this.context.sampleRate)
         this._postMessage({readPosition})
     },
 

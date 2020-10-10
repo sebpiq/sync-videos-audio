@@ -20,9 +20,11 @@
   },
   "homepage": "https://github.com/sebpiq/sync-videos-audio#readme",
   "dependencies": {
+    "@types/p-event": "^3.0.0",
     "@types/redux": "^3.6.0",
     "koa": "^2.13.0",
     "koa-static": "^5.0.0",
+    "p-event": "^4.2.0",
     "redux": "^4.0.5",
     "ws": "^7.3.1"
   },

@@ -3,7 +3,7 @@ const path = require('path')
 module.exports = {
     mode: 'none',
     entry: {
-        'client-video': './src/client-video.ts',
+        'client-video': './src/client-video/index.ts',
         'client-audio': './src/client-audio/index.ts',
         'PlaybackNodeProcessor': './src/client-audio/PlaybackNode/PlaybackNodeProcessor.ts'
     },

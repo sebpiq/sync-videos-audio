@@ -2,9 +2,9 @@ import WebSocket from 'ws'
 import Koa from 'koa'
 import koaStatic from 'koa-static'
 import http from 'http'
-import { once } from 'events'
 import state from './state'
 import config from './config'
+import pEvent from 'p-event'
 
 const createWebSocketServer = async () => {
     const webSocketServer = new WebSocket.Server({ server: state.get().httpServer })
@@ -23,7 +23,7 @@ const createHttpServer = async () => {
 
 const startHttpServer = async () => {
     state.get().httpServer.listen(config.SERVER_PORT)
-    await once(state.get().httpServer, 'listening')    
+    await pEvent(state.get().httpServer, 'listening')
 }
 
 const createKoaApp = async () => {
