@@ -7,7 +7,8 @@
     "build": "npx tsc",
     "start": "node .",
     "dev:start": "npm run build ; npm start",
-    "watch": "nodemon --watch src -e ts,ejs --exec npm run dev:start"
+    "watch": "nodemon --watch src -e ts,ejs --exec npm run dev:start",
+    "prettier": "npx prettier --write"
   },
   "repository": {
     "type": "git",
