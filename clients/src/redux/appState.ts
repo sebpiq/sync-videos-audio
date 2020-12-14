@@ -1,5 +1,7 @@
+import { v4 as uuidv4 } from 'uuid'
 import ReconnectingWebSocket from "reconnecting-websocket"
 import { PlaybackNodeWorkletType } from "../client-audio/PlaybackNode/PlaybackNodeWorklet"
+import { ClientId } from '../shared/types'
 
 // ------------- Action Types ------------ //
 const SET_VALUES =
@@ -44,6 +46,7 @@ export const set = (values: Partial<State>): ActionTypes => ({
 
 // ----------------- State --------------- //
 export interface State {
+    clientId: ClientId
     webSocket: ReconnectingWebSocket | null
     audio: {
         context: AudioContext
@@ -58,6 +61,7 @@ export interface State {
 }
 
 const initialState: State = {
+    clientId: uuidv4(),
     webSocket: null,
     audio: null,
     syncState: null,

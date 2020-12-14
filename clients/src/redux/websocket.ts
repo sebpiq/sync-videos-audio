@@ -1,5 +1,3 @@
-// ------------- Action Types ------------ //
-
 import { Message } from "../shared/websocket-messages";
 
 // ------------- Action Types ------------ //

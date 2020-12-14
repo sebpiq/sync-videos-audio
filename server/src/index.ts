@@ -5,13 +5,43 @@ import http from 'http'
 import state from './state'
 import config from './config'
 import pEvent from 'p-event'
+import { FollowerConnectMessage, unpackMeta } from './shared/websocket-messages'
+import { BROADCAST_ID, LEADER_ID, SERVER_ID } from './shared/constants'
 
 const createWebSocketServer = async () => {
+    const clientIds: {[clientId : string]: WebSocket} = {}
     const webSocketServer = new WebSocket.Server({ server: state.get().httpServer })
-    webSocketServer.on('connection', (webSocket) =>  {
-        webSocket.on('message', (messageStr: string) => {
-            console.log(messageStr)
-            webSocketServer.clients.forEach((otherWebSocket) => otherWebSocket.send(messageStr))
+    webSocketServer.on('connection', (client) =>  {
+        client.on('message', (messageStrWithMeta: string) => {
+            console.log(messageStrWithMeta)
+            const [recipientId, messageType, messageStr] = unpackMeta(messageStrWithMeta)
+
+            // Save the client with its id in the map
+            switch(messageType) {
+                case 'WEBSOCKET_MESSAGE_FOLLOWER_CONNECT':
+                    const message: FollowerConnectMessage = JSON.parse(messageStr)
+                    clientIds[message.payload.clientId] = client
+                    break
+                case 'WEBSOCKET_MESSAGE_LEADER_CONNECT':
+                    clientIds[LEADER_ID] = client
+                    break
+            }
+
+            // Proxy the message to the right client
+            switch(recipientId) {
+                case BROADCAST_ID:
+                    webSocketServer.clients.forEach((otherWebSocket) => otherWebSocket.send(messageStrWithMeta))            
+                    break
+                case SERVER_ID:
+                    break
+                default:
+                    const recipient = clientIds[recipientId]
+                    if (!recipient) {
+                        console.error(`unknown id ${recipientId}`)
+                        break
+                    }
+                    recipient.send(messageStrWithMeta)
+            }
         })
     })
     return webSocketServer

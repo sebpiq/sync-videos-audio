@@ -4,10 +4,11 @@ import websocket from '../websocket'
 import lag from '../lag'
 import { LagQueryMessage, LagResponseMessage } from '../shared/websocket-messages'
 import { Message } from '../shared/websocket-messages'
+import { LEADER_ID } from '../shared/constants'
 
 function* sendBackLagResponseSaga(lagQueryMessage: LagQueryMessage) {
     const lagResponseMessage: LagResponseMessage = lag.makeLagResponseMessage(lagQueryMessage)
-    websocket.send(lagResponseMessage)
+    websocket.send(LEADER_ID, lagResponseMessage)
 }
 
 function* bla(lagQueryMessage: LagQueryMessage) {
