@@ -1,23 +1,23 @@
 // REF : https://github.com/microsoft/TypeScript/issues/28308
 interface AudioWorkletProcessor {
-    readonly port: MessagePort;
+    readonly port: MessagePort
     process(
-      inputs: Float32Array[][],
-      outputs: Float32Array[][],
-      parameters: Record<string, Float32Array>
-    ): boolean;
+        inputs: Float32Array[][],
+        outputs: Float32Array[][],
+        parameters: Record<string, Float32Array>
+    ): boolean
 }
-  
+
 declare var AudioWorkletProcessor: {
-    prototype: AudioWorkletProcessor;
-    new (options?: AudioWorkletNodeOptions): AudioWorkletProcessor;
-};
-  
+    prototype: AudioWorkletProcessor
+    new (options?: AudioWorkletNodeOptions): AudioWorkletProcessor
+}
+
 declare function registerProcessor(
     name: string,
     processorCtor: (new (
-      options?: AudioWorkletNodeOptions
+        options?: AudioWorkletNodeOptions
     ) => AudioWorkletProcessor) & {
-      parameterDescriptors?: AudioParamDescriptor[];
+        parameterDescriptors?: AudioParamDescriptor[]
     }
-): void;
+): void

@@ -1,4 +1,4 @@
-import {ClientId} from './types'
+import { ClientId } from './types'
 
 export interface TickMessage {
     type: 'WEBSOCKET_MESSAGE_TICK'
@@ -41,9 +41,19 @@ export interface FollowerConnectedMessage {
     }
 }
 
-export type Message = TickMessage | LagQueryMessage | LagResponseMessage | FollowerConnectedMessage | FollowerConnectMessage | LeaderConnectMessage
+export type Message =
+    | TickMessage
+    | LagQueryMessage
+    | LagResponseMessage
+    | FollowerConnectedMessage
+    | FollowerConnectMessage
+    | LeaderConnectMessage
 
-export const packMeta = (recipientId: ClientId, messageType: Message["type"], messageStr: string) => {
+export const packMeta = (
+    recipientId: ClientId,
+    messageType: Message['type'],
+    messageStr: string
+) => {
     if (recipientId.indexOf('|') !== -1) {
         throw new Error(`client id with unvalid characters ${recipientId}`)
     }
@@ -53,5 +63,7 @@ export const packMeta = (recipientId: ClientId, messageType: Message["type"], me
     return `${recipientId}|${messageType}|${messageStr}`
 }
 
-export const unpackMeta = (messageStrWithMeta: string): [ClientId, Message["type"], string] =>
-    messageStrWithMeta.split('|', 3) as [ClientId, Message["type"], string]
+export const unpackMeta = (
+    messageStrWithMeta: string
+): [ClientId, Message['type'], string] =>
+    messageStrWithMeta.split('|', 3) as [ClientId, Message['type'], string]

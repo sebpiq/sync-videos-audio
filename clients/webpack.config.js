@@ -5,7 +5,8 @@ module.exports = {
     entry: {
         'client-video': './src/client-video/index.ts',
         'client-audio': './src/client-audio/index.ts',
-        'PlaybackNodeProcessor': './src/client-audio/PlaybackNode/PlaybackNodeProcessor.ts'
+        PlaybackNodeProcessor:
+            './src/client-audio/PlaybackNode/PlaybackNodeProcessor.ts',
     },
     module: {
         rules: [
@@ -17,7 +18,7 @@ module.exports = {
         ],
     },
     resolve: {
-        extensions: [ '.tsx', '.ts', '.js' ],
+        extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
         path: path.resolve(__dirname, '..', 'www', 'build'),

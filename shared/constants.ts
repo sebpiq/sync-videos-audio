@@ -1,4 +1,4 @@
-import {ClientId} from './types'
+import { ClientId } from './types'
 
 export const LEADER_ID: ClientId = 'leader'
 export const SERVER_ID: ClientId = 'server'

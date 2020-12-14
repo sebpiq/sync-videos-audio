@@ -1,12 +1,12 @@
-const webpackBase = require( './webpack.config')
+const webpackBase = require('./webpack.config')
 
 module.exports = {
     ...webpackBase,
     watch: true,
-    devtool: "source-map",
+    devtool: 'source-map',
     output: {
         ...webpackBase.output,
-        filename: '[name].js'
+        filename: '[name].js',
     },
-    mode: 'development'
-};
+    mode: 'development',
+}

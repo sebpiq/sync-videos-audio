@@ -2,10 +2,15 @@ import pEvent from 'p-event'
 import DelayButtons from '../components/DelayButtons'
 import { addStartButton } from '../components/StartButton'
 import config from '../config'
-import { FollowerConnectedMessage, LagQueryMessage, LagResponseMessage, TickMessage } from '../shared/websocket-messages'
+import {
+    FollowerConnectedMessage,
+    LagQueryMessage,
+    LagResponseMessage,
+    TickMessage,
+} from '../shared/websocket-messages'
 import ws from '../websocket'
 import audio from './audio'
-import {getAppState, initialize} from '../redux'
+import { getAppState, initialize } from '../redux'
 import rootSaga from './sagas'
 import { LEADER_ID } from '../shared/constants'
 
@@ -13,16 +18,19 @@ const main = async () => {
     initialize(rootSaga)
     await ws.open(config.webSocket.url)
     await audio.load('/media/audio.mp3')
-    await ws.send(LEADER_ID, { type: 'WEBSOCKET_MESSAGE_FOLLOWER_CONNECT', payload: { clientId: getAppState().clientId } })
+    await ws.send(LEADER_ID, {
+        type: 'WEBSOCKET_MESSAGE_FOLLOWER_CONNECT',
+        payload: { clientId: getAppState().clientId },
+    })
 
     // const startButton = addStartButton()
     // await pEvent(startButton, 'click')
     // await audio.start()
-    
+
     // const message = await pEvent(ws.events, 'tick') as TickMessage
     // state.refreshSyncState(message.payload.currentTime)
     // state.get().audio.playbackNode.setCurrentTime(message.payload.currentTime)
-    
+
     // DelayButtons(document.body)
     // state.subscribe(() => {
     //     const stateValues = state.get()
@@ -34,7 +42,6 @@ const main = async () => {
     // })
 }
 
-main()
-    .then(() => {
-        console.log(`client started`)
-    })
+main().then(() => {
+    console.log(`client started`)
+})

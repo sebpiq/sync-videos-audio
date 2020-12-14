@@ -1,5 +1,5 @@
 import config from '../../config'
-import { PlaybackNodeMessageData } from "./types"
+import { PlaybackNodeMessageData } from './types'
 
 class PlaybackNodeProcessor extends AudioWorkletProcessor {
     private audioArrays: Array<Float32Array>
@@ -13,22 +13,32 @@ class PlaybackNodeProcessor extends AudioWorkletProcessor {
         this.readPosition = 0
         this.port.onmessage = (event) => {
             const messageData: PlaybackNodeMessageData = event.data
-            
+
             if ('audioArrays' in messageData) {
                 this.audioArrays = messageData.audioArrays
-                this.channelCount = Math.min(messageData.audioArrays.length, config.audio.channelCount)
-                console.log(`received audio length ${this.audioArrays[0].length}, channels ${this.channelCount}`)
+                this.channelCount = Math.min(
+                    messageData.audioArrays.length,
+                    config.audio.channelCount
+                )
+                console.log(
+                    `received audio length ${this.audioArrays[0].length}, channels ${this.channelCount}`
+                )
             }
 
             if ('readPosition' in messageData) {
-                if (Math.abs(this.readPosition - messageData.readPosition) > config.audio.maxDrift) {
+                if (
+                    Math.abs(this.readPosition - messageData.readPosition) >
+                    config.audio.maxDrift
+                ) {
                     this.readPosition = messageData.readPosition
-                    console.log(`resyncing audio to ${messageData.readPosition}`)
+                    console.log(
+                        `resyncing audio to ${messageData.readPosition}`
+                    )
                 }
             }
         }
     }
-  
+
     process(
         inputs: Float32Array[][],
         outputs: Float32Array[][],
@@ -42,7 +52,8 @@ class PlaybackNodeProcessor extends AudioWorkletProcessor {
         for (let channel = 0; channel < this.channelCount; channel++) {
             output[channel].set(
                 this.audioArrays[channel].subarray(
-                    this.readPosition, this.readPosition + outputLength
+                    this.readPosition,
+                    this.readPosition + outputLength
                 )
             )
         }
@@ -50,5 +61,5 @@ class PlaybackNodeProcessor extends AudioWorkletProcessor {
         return true
     }
 }
-  
+
 registerProcessor('playback-node', PlaybackNodeProcessor)

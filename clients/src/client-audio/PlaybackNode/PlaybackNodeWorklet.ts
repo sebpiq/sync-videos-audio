@@ -1,11 +1,15 @@
-import config from "../../config";
-import { PlaybackNodeMessageData } from "./types";
+import config from '../../config'
+import { PlaybackNodeMessageData } from './types'
 
 export default class PlaybackNodeWorklet extends AudioWorkletNode {
     constructor(context: AudioContext, audioBuffer: AudioBuffer) {
-        super(context, 'playback-node', { numberOfInputs: 0, numberOfOutputs: 1, outputChannelCount: [config.audio.channelCount] })
-        const anotherArray = new Float32Array(audioBuffer.length);
-        audioBuffer.copyFromChannel(anotherArray,0,0)
+        super(context, 'playback-node', {
+            numberOfInputs: 0,
+            numberOfOutputs: 1,
+            outputChannelCount: [config.audio.channelCount],
+        })
+        const anotherArray = new Float32Array(audioBuffer.length)
+        audioBuffer.copyFromChannel(anotherArray, 0, 0)
 
         const node: PlaybackNodeWorkletType = Object.assign(this, Methods)
         node._constructor(anotherArray)
@@ -16,17 +20,19 @@ export default class PlaybackNodeWorklet extends AudioWorkletNode {
 // traditional way, `this` doesn't have the additional methods.
 const Methods = {
     _constructor(anotherArray: Float32Array) {
-        this._postMessage({audioArrays: [anotherArray]})
+        this._postMessage({ audioArrays: [anotherArray] })
     },
 
     setCurrentTime(timeMs: number) {
-        const readPosition = Math.round(timeMs / 1000 * this.context.sampleRate)
-        this._postMessage({readPosition})
+        const readPosition = Math.round(
+            (timeMs / 1000) * this.context.sampleRate
+        )
+        this._postMessage({ readPosition })
     },
 
     _postMessage(messageData: PlaybackNodeMessageData) {
         this.port.postMessage(messageData)
-    }
+    },
 }
 
 // Hack 2, since we dynamically bind the methods, we also have to create a special

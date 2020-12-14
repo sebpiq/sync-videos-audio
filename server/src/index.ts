@@ -9,17 +9,23 @@ import { FollowerConnectMessage, unpackMeta } from './shared/websocket-messages'
 import { BROADCAST_ID, LEADER_ID, SERVER_ID } from './shared/constants'
 
 const createWebSocketServer = async () => {
-    const clientIds: {[clientId : string]: WebSocket} = {}
-    const webSocketServer = new WebSocket.Server({ server: state.get().httpServer })
-    webSocketServer.on('connection', (client) =>  {
+    const clientIds: { [clientId: string]: WebSocket } = {}
+    const webSocketServer = new WebSocket.Server({
+        server: state.get().httpServer,
+    })
+    webSocketServer.on('connection', (client) => {
         client.on('message', (messageStrWithMeta: string) => {
             console.log(messageStrWithMeta)
-            const [recipientId, messageType, messageStr] = unpackMeta(messageStrWithMeta)
+            const [recipientId, messageType, messageStr] = unpackMeta(
+                messageStrWithMeta
+            )
 
             // Save the client with its id in the map
-            switch(messageType) {
+            switch (messageType) {
                 case 'WEBSOCKET_MESSAGE_FOLLOWER_CONNECT':
-                    const message: FollowerConnectMessage = JSON.parse(messageStr)
+                    const message: FollowerConnectMessage = JSON.parse(
+                        messageStr
+                    )
                     clientIds[message.payload.clientId] = client
                     break
                 case 'WEBSOCKET_MESSAGE_LEADER_CONNECT':
@@ -28,9 +34,11 @@ const createWebSocketServer = async () => {
             }
 
             // Proxy the message to the right client
-            switch(recipientId) {
+            switch (recipientId) {
                 case BROADCAST_ID:
-                    webSocketServer.clients.forEach((otherWebSocket) => otherWebSocket.send(messageStrWithMeta))            
+                    webSocketServer.clients.forEach((otherWebSocket) =>
+                        otherWebSocket.send(messageStrWithMeta)
+                    )
                     break
                 case SERVER_ID:
                     break
@@ -67,14 +75,16 @@ const main = async () => {
     state.set({ koaApp: await createKoaApp() })
     state.set({ httpServer: await createHttpServer() })
     state.set({ webSocketServer: await createWebSocketServer() })
-    return startHttpServer()   
+    return startHttpServer()
 }
 
-main().then(() => {
-    console.log(`server running on port ${config.SERVER_PORT}`)
-    console.log(`Serving static content from ${config.ROOT_DIR}`)
-}).catch((error) => {
-    console.error(`server failed starting`)
-    console.error(error)
-    process.exit(1)
-})
+main()
+    .then(() => {
+        console.log(`server running on port ${config.SERVER_PORT}`)
+        console.log(`Serving static content from ${config.ROOT_DIR}`)
+    })
+    .catch((error) => {
+        console.error(`server failed starting`)
+        console.error(error)
+        process.exit(1)
+    })

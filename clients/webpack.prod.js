@@ -1,10 +1,10 @@
-const webpackBase = require( './webpack.config')
+const webpackBase = require('./webpack.config')
 
 module.exports = {
     ...webpackBase,
     output: {
         ...webpackBase.output,
-        filename: '[name].js'
+        filename: '[name].js',
     },
-    mode: 'production'
+    mode: 'production',
 }

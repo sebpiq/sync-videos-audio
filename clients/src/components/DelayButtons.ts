@@ -2,7 +2,7 @@
 
 const DELAY_INCREMENT_MS = 20
 
-const formatCurrentDelay = (delayMs: number) => 
+const formatCurrentDelay = (delayMs: number) =>
     `${Math.round(delayMs) / 1000} seconds`
 
 const template = `

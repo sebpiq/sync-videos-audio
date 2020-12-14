@@ -1,15 +1,12 @@
 import { v4 as uuidv4 } from 'uuid'
-import ReconnectingWebSocket from "reconnecting-websocket"
-import { PlaybackNodeWorkletType } from "../client-audio/PlaybackNode/PlaybackNodeWorklet"
+import ReconnectingWebSocket from 'reconnecting-websocket'
+import { PlaybackNodeWorkletType } from '../client-audio/PlaybackNode/PlaybackNodeWorklet'
 import { ClientId } from '../shared/types'
 
 // ------------- Action Types ------------ //
-const SET_VALUES =
-    'SET_VALUES'
-const REFRESH_SYNC_STATE =
-    'REFRESH_SYNC_STATE'
-const INCREMENT_SYNC_STATE_DELAY =
-    'INCREMENT_SYNC_STATE_DELAY'
+const SET_VALUES = 'SET_VALUES'
+const REFRESH_SYNC_STATE = 'REFRESH_SYNC_STATE'
+const INCREMENT_SYNC_STATE_DELAY = 'INCREMENT_SYNC_STATE_DELAY'
 
 interface SetValue {
     type: typeof SET_VALUES
@@ -31,7 +28,7 @@ type ActionTypes = SetValue | RefreshSyncState | SetSyncStateDelay
 // ------------- Action Creators ------------ //
 export const set = (values: Partial<State>): ActionTypes => ({
     type: SET_VALUES,
-    payload: values
+    payload: values,
 })
 
 // const refreshSyncState = (readPositionMs: number): ActionTypes => store.store.dispatch({
@@ -68,10 +65,7 @@ const initialState: State = {
 }
 
 // ---------------- Reducer -------------- //
-export const reducer = (
-    state = initialState,
-    action: ActionTypes
-): State => {
+export const reducer = (state = initialState, action: ActionTypes): State => {
     switch (action.type) {
         case SET_VALUES:
             return {
