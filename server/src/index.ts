@@ -10,6 +10,7 @@ const createWebSocketServer = async () => {
     const webSocketServer = new WebSocket.Server({ server: state.get().httpServer })
     webSocketServer.on('connection', (webSocket) =>  {
         webSocket.on('message', (messageStr: string) => {
+            console.log(messageStr)
             webSocketServer.clients.forEach((otherWebSocket) => otherWebSocket.send(messageStr))
         })
     })

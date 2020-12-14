@@ -1,6 +1,5 @@
 import ReconnectingWebSocket from "reconnecting-websocket"
-import { createStore } from "redux"
-import { PlaybackNodeWorkletType } from "./client-audio/PlaybackNode/PlaybackNodeWorklet"
+import { PlaybackNodeWorkletType } from "../client-audio/PlaybackNode/PlaybackNodeWorklet"
 
 // ------------- Action Types ------------ //
 const SET_VALUES =
@@ -27,8 +26,24 @@ interface SetSyncStateDelay {
 
 type ActionTypes = SetValue | RefreshSyncState | SetSyncStateDelay
 
+// ------------- Action Creators ------------ //
+export const set = (values: Partial<State>): ActionTypes => ({
+    type: SET_VALUES,
+    payload: values
+})
+
+// const refreshSyncState = (readPositionMs: number): ActionTypes => store.store.dispatch({
+//     type: REFRESH_SYNC_STATE,
+//     payload: readPositionMs
+// })
+
+// const incrementSyncStateDelay = (delayIncrementMs: number): ActionTypes => store.store.dispatch({
+//     type: INCREMENT_SYNC_STATE_DELAY,
+//     payload: delayIncrementMs
+// })
+
 // ----------------- State --------------- //
-interface State {
+export interface State {
     webSocket: ReconnectingWebSocket | null
     audio: {
         context: AudioContext
@@ -49,7 +64,7 @@ const initialState: State = {
 }
 
 // ---------------- Reducer -------------- //
-const reducer = (
+export const reducer = (
     state = initialState,
     action: ActionTypes
 ): State => {
@@ -80,29 +95,3 @@ const reducer = (
             return state
     }
 }
-
-const store = createStore(reducer)
-
-// ----------------- API --------------- //
-const set = (values: Partial<State>): ActionTypes => store.dispatch({
-    type: SET_VALUES,
-    payload: values
-})
-
-const get = (): Readonly<State> => store.getState()
-
-const subscribe = (listener: () => void) => {
-    store.subscribe(listener)
-}
-
-const refreshSyncState = (readPositionMs: number): ActionTypes => store.dispatch({
-    type: REFRESH_SYNC_STATE,
-    payload: readPositionMs
-})
-
-const incrementSyncStateDelay = (delayIncrementMs: number): ActionTypes => store.dispatch({
-    type: INCREMENT_SYNC_STATE_DELAY,
-    payload: delayIncrementMs
-})
-
-export default { set, get, refreshSyncState, incrementSyncStateDelay, subscribe }

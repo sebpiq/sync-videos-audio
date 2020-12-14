@@ -8,5 +8,9 @@ export default {
         channelCount: 2,
         // Max drift between audio playback and video, before resyncing (in samples)
         maxDrift: 0.1
+    },
+    lag: {
+        queryCount: 4,
+        queryTimeout: 500
     }
 }

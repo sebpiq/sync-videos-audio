@@ -1,4 +1,4 @@
-import state from "../state"
+// import state from "../redux/appState"
 
 const DELAY_INCREMENT_MS = 20
 
@@ -15,13 +15,13 @@ const template = `
 
 export default (container: HTMLElement) => {
     container.insertAdjacentHTML('beforeend', template)
-    container.querySelector<HTMLButtonElement>('.less').onclick = () => {
-        state.incrementSyncStateDelay(-DELAY_INCREMENT_MS)
-    }
-    container.querySelector<HTMLButtonElement>('.more').onclick = () => {
-        state.incrementSyncStateDelay(DELAY_INCREMENT_MS)
-    }
-    state.subscribe(() => {
-        container.querySelector('.current').innerHTML = formatCurrentDelay(state.get().syncState.delayMs)
-    })
+    // container.querySelector<HTMLButtonElement>('.less').onclick = () => {
+    //     state.incrementSyncStateDelay(-DELAY_INCREMENT_MS)
+    // }
+    // container.querySelector<HTMLButtonElement>('.more').onclick = () => {
+    //     state.incrementSyncStateDelay(DELAY_INCREMENT_MS)
+    // }
+    // state.subscribe(() => {
+    //     container.querySelector('.current').innerHTML = formatCurrentDelay(state.get().syncState.delayMs)
+    // })
 }
