@@ -16,12 +16,9 @@ class PlaybackNodeProcessor extends AudioWorkletProcessor {
 
             if ('audioArrays' in messageData) {
                 this.audioArrays = messageData.audioArrays
-                this.channelCount = Math.min(
-                    messageData.audioArrays.length,
-                    config.audio.channelCount
-                )
+                this.channelCount = messageData.audioArrays.length
                 console.log(
-                    `received audio length ${this.audioArrays[0].length}, channels ${this.channelCount}`
+                    `[PlaybackNodeProcessor] audioArrays | channels ${this.channelCount} | length ${this.audioArrays[0].length}`
                 )
             }
 
@@ -32,7 +29,7 @@ class PlaybackNodeProcessor extends AudioWorkletProcessor {
                 ) {
                     this.readPosition = messageData.readPosition
                     console.log(
-                        `resyncing audio to ${messageData.readPosition}`
+                        `[PlaybackNodeProcessor] resyncing audio to ${messageData.readPosition}`
                     )
                 }
             }

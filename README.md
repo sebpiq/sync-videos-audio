@@ -29,6 +29,8 @@ docker run --rm \
 TODO
 =====
 
+- add offset for ScriptProcessorNode when used
+- download audio by chunks
 - save server state
 - server restart
 - client auto reconnect

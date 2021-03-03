@@ -1,4 +1,5 @@
 !(function () {
+    window.polyfilledAudioWorkletNode = false
     var e,
         t = [];
     function r(e) {
@@ -23,9 +24,9 @@
     }
     ;("function" != typeof AudioWorkletNode || window.forcePolyfillingAudioWorkletNode) &&
         ((self.AudioWorkletNode = function (t, o, i) {
-            console.log('POLYFILLING')
+            window.polyfilledAudioWorkletNode = true
             var s = n(t)[o],
-                a = t.createScriptProcessor(void 0, 2, i && i.outputChannelCount ? i.outputChannelCount[0] : 2);
+                a = t.createScriptProcessor(16384, 2, i && i.outputChannelCount ? i.outputChannelCount[0] : 2);
             if (((a.parameters = new Map()), s.properties))
                 for (var u = 0; u < s.properties.length; u++) {
                     var c = s.properties[u],

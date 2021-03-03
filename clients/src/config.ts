@@ -1,18 +1,18 @@
 export default {
     webSocket: {
-        url: location
+        url: typeof location !== 'undefined'
             ? `ws://${location.host}/`
             : 'location not available in worker',
     },
     jsRoot: '/build',
-    tickInterval: 1000,
+    tickInterval: 4000,
     audio: {
         channelCount: 2,
         // Max drift between audio playback and video, before resyncing (in samples)
         maxDrift: 0.1,
     },
-    lag: {
-        queryCount: 4,
+    timeDiff: {
+        queryCount: 20,
         queryTimeout: 500,
     },
 }

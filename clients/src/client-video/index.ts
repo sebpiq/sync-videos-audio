@@ -4,7 +4,7 @@ import config from '../config'
 import ws from '../websocket'
 import { initialize, setAppState } from '../redux'
 import rootSaga from './sagas'
-import { LEADER_ID, SERVER_ID } from '../shared/constants'
+import { BROADCAST_ID, LEADER_ID, SERVER_ID } from '../shared/constants'
 
 const main = async () => {
     initialize(rootSaga)
@@ -17,7 +17,10 @@ const main = async () => {
     })
 
     const videoElement: HTMLVideoElement = document.querySelector('#video')
-    await pEvent(videoElement, 'canplaythrough')
+    // REF : https://stackoverflow.com/questions/10235919/the-canplay-canplaythrough-events-for-an-html5-video-are-not-called-on-firefox
+    if (videoElement.readyState <= 3) {
+        await pEvent(videoElement, 'canplaythrough')
+    }
     console.log('can play through')
 
     const startButton = addStartButton()
@@ -28,13 +31,16 @@ const main = async () => {
 
     await pEvent(startButton, 'click')
 
-    // const startTick = (videoElement: HTMLVideoElement) => {
-    //     setInterval(() => {
-    //         ws.send({type: 'tick', payload: {currentTime: videoElement.currentTime * 1000}})
-    //     }, config.tickInterval)
-    // }
+    const startTick = (videoElement: HTMLVideoElement) => {
+        setInterval(() => {
+            ws.send(BROADCAST_ID, {type: 'WEBSOCKET_MESSAGE_TICK', payload: {
+                position: videoElement.currentTime * 1000,
+                localTime: Date.now()
+            }})
+        }, config.tickInterval)
+    }
 
-    // startTick(videoElement)
+    startTick(videoElement)
 }
 
 main()

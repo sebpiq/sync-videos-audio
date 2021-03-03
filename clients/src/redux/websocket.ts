@@ -6,7 +6,7 @@ interface WebsocketMessage {
     payload: Message['payload']
 }
 
-type ActionTypes = WebsocketMessage
+export type ActionTypes = WebsocketMessage
 
 // ------------- Action Creators ------------ //
 export const dispatchWebsocketMessageAction = (message: Message): ActionTypes =>

@@ -1,26 +1,36 @@
+import { channel } from 'redux-saga'
 import config from '../../config'
 import { PlaybackNodeMessageData } from './types'
 
 export default class PlaybackNodeWorklet extends AudioWorkletNode {
     constructor(context: AudioContext, audioBuffer: AudioBuffer) {
+        const channelCount = Math.min(
+            audioBuffer.numberOfChannels,
+            config.audio.channelCount
+        )
         super(context, 'playback-node', {
             numberOfInputs: 0,
             numberOfOutputs: 1,
-            outputChannelCount: [config.audio.channelCount],
+            outputChannelCount: [channelCount],
         })
-        const anotherArray = new Float32Array(audioBuffer.length)
-        audioBuffer.copyFromChannel(anotherArray, 0, 0)
 
         const node: PlaybackNodeWorkletType = Object.assign(this, Methods)
-        node._constructor(anotherArray)
+        node._constructor(audioBuffer, channelCount)
     }
 }
 
 // Hack because the polyfill creates a ScriptProcessorNode, so if we simply declare the class in a
 // traditional way, `this` doesn't have the additional methods.
 const Methods = {
-    _constructor(anotherArray: Float32Array) {
-        this._postMessage({ audioArrays: [anotherArray] })
+    _constructor(audioBuffer: AudioBuffer, channelCount: number) {
+        const audioArrays: Array<Float32Array> = []
+        for (let ch = 0; ch < channelCount; ch++) {
+           const audioArray = new Float32Array(audioBuffer.length)
+           audioArrays.push(audioArray)
+           audioBuffer.copyFromChannel(audioArray, ch, 0)
+        }
+        console.log(audioArrays, channelCount)
+        this._postMessage({ audioArrays })
     },
 
     setCurrentTime(timeMs: number) {

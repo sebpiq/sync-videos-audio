@@ -1,5 +1,8 @@
 // import state from "../redux/appState"
 
+import { incrementResyncTimeDiff } from "../redux/follower"
+import { dispatch, getFollowerState, subscribe } from "../redux"
+
 const DELAY_INCREMENT_MS = 20
 
 const formatCurrentDelay = (delayMs: number) =>
@@ -15,13 +18,13 @@ const template = `
 
 export default (container: HTMLElement) => {
     container.insertAdjacentHTML('beforeend', template)
-    // container.querySelector<HTMLButtonElement>('.less').onclick = () => {
-    //     state.incrementSyncStateDelay(-DELAY_INCREMENT_MS)
-    // }
-    // container.querySelector<HTMLButtonElement>('.more').onclick = () => {
-    //     state.incrementSyncStateDelay(DELAY_INCREMENT_MS)
-    // }
-    // state.subscribe(() => {
-    //     container.querySelector('.current').innerHTML = formatCurrentDelay(state.get().syncState.delayMs)
-    // })
+    container.querySelector<HTMLButtonElement>('.less').onclick = () => {
+        dispatch(incrementResyncTimeDiff(-DELAY_INCREMENT_MS))
+    }
+    container.querySelector<HTMLButtonElement>('.more').onclick = () => {
+        dispatch(incrementResyncTimeDiff(DELAY_INCREMENT_MS))
+    }
+    subscribe(() => {
+        container.querySelector('.current').innerHTML = formatCurrentDelay(getFollowerState().resyncTimeDiff)
+    })
 }

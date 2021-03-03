@@ -3,7 +3,8 @@ import { ClientId } from './types'
 export interface TickMessage {
     type: 'WEBSOCKET_MESSAGE_TICK'
     payload: {
-        currentTime: number
+        position: number
+        localTime: number
     }
 }
 
@@ -19,15 +20,15 @@ export interface LeaderConnectMessage {
     payload: {}
 }
 
-export interface LagQueryMessage {
-    type: 'WEBSOCKET_MESSAGE_LAG_QUERY'
+export interface TimeDiffQueryMessage {
+    type: 'WEBSOCKET_MESSAGE_TIME_DIFF_QUERY'
     payload: {
         leaderTimestamp: number
     }
 }
 
-export interface LagResponseMessage {
-    type: 'WEBSOCKET_MESSAGE_LAG_RESPONSE'
+export interface TimeDiffResponseMessage {
+    type: 'WEBSOCKET_MESSAGE_TIME_DIFF_RESPONSE'
     payload: {
         leaderTimestamp: number
         followerTimestamp: number
@@ -37,14 +38,14 @@ export interface LagResponseMessage {
 export interface FollowerConnectedMessage {
     type: 'WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED'
     payload: {
-        lagTime: number
+        timeDiff: number
     }
 }
 
 export type Message =
     | TickMessage
-    | LagQueryMessage
-    | LagResponseMessage
+    | TimeDiffQueryMessage
+    | TimeDiffResponseMessage
     | FollowerConnectedMessage
     | FollowerConnectMessage
     | LeaderConnectMessage

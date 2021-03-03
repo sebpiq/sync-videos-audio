@@ -20,24 +20,34 @@ const loadSound = async (
     })
 }
 
-const load = async (soundUrl: string): Promise<void> => {
+const createAudioContext = async (): Promise<AudioContext> => {
     const context = new AudioContext()
-    const audioBuffer = await loadSound(context, soundUrl)
     await context.audioWorklet.addModule(
         `${config.jsRoot}/PlaybackNodeProcessor.js`
     )
+    return context
+}
+
+const buildAudioGraph = async (audioContext: AudioContext, audioBuffer: AudioBuffer) => {
+    audioContext.resume()
+    const playbackNode = new PlaybackNodeWorklet(
+        audioContext,
+        audioBuffer
+    ) as PlaybackNodeWorkletType
+    playbackNode.connect(audioContext.destination)
+    return playbackNode
+}
+
+const load = async (soundUrl: string): Promise<void> => {
+    const context = await createAudioContext()
+    const audioBuffer = await loadSound(context, soundUrl)
     setAppState({ audio: { ...getAppState().audio, context, audioBuffer } })
 }
 
 const start = async () => {
     const { context, audioBuffer } = getAppState().audio
-    context.resume()
-    const playbackNode = new PlaybackNodeWorklet(
-        context,
-        audioBuffer
-    ) as PlaybackNodeWorkletType
-    playbackNode.connect(context.destination)
+    const playbackNode = await buildAudioGraph(context, audioBuffer)
     setAppState({ audio: { ...getAppState().audio, playbackNode } })
 }
 
-export default { load, start }
+export default { load, start, createAudioContext, loadSound, buildAudioGraph }

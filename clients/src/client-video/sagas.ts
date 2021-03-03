@@ -9,53 +9,53 @@ import { ClientId } from '../shared/types'
 
 const DELAY_BETWEEN_QUERIES = 100
 
-function* sendLagQuerySaga(leaderTimestamp: number, followerId: ClientId) {
+function* sendTimeDiffQuerySaga(leaderTimestamp: number, followerId: ClientId) {
     yield call(websocket.send, followerId, {
-        type: 'WEBSOCKET_MESSAGE_LAG_QUERY',
+        type: 'WEBSOCKET_MESSAGE_TIME_DIFF_QUERY',
         payload: { leaderTimestamp },
     })
-    const { lagResponse, timeout } = yield race({
-        lagResponse: take('WEBSOCKET_MESSAGE_LAG_RESPONSE' as Message['type']),
-        timeout: delay(config.lag.queryTimeout),
+    const { timeDiffResponse, timeout } = yield race({
+        timeDiffResponse: take('WEBSOCKET_MESSAGE_TIME_DIFF_RESPONSE' as Message['type']),
+        timeout: delay(config.timeDiff.queryTimeout),
     })
     if (timeout) {
-        console.error('lag query timeout')
+        console.error('timeDiff query timeout')
         return null
     }
-    return lagResponse
+    return timeDiffResponse
 }
 
 function* newFollowerSaga(action: FollowerConnectMessage) {
-    const lags: Array<number> = []
+    const timeDiffs: Array<number> = []
 
-    for (let i = 0; i < config.lag.queryCount; i++) {
+    for (let i = 0; i < config.timeDiff.queryCount; i++) {
         yield delay(DELAY_BETWEEN_QUERIES)
         const leaderTimestamp = Date.now()
-        const lagResponse = yield call(
-            sendLagQuerySaga,
+        const timeDiffResponse = yield call(
+            sendTimeDiffQuerySaga,
             leaderTimestamp,
             action.payload.clientId
         )
         if (
-            !lagResponse ||
-            lagResponse.payload.leaderTimestamp !== leaderTimestamp
+            !timeDiffResponse ||
+            timeDiffResponse.payload.leaderTimestamp !== leaderTimestamp
         ) {
-            console.error(`lag response error`)
+            console.error(`timeDiff response error`)
             continue
         }
         const roundtripTime = Date.now() - leaderTimestamp
-        const lag =
-            lagResponse.payload.followerTimestamp -
-            roundtripTime / 2 -
-            leaderTimestamp
-        lags.push(lag)
+        const followerTimestamp = timeDiffResponse.payload.followerTimestamp - roundtripTime / 2
+        // This time diff direclty gives the offset that should be applied to follower if it wants
+        // to get it sync with leader
+        timeDiffs.push(leaderTimestamp - followerTimestamp)
+        console.log(leaderTimestamp - followerTimestamp)
     }
 
-    const lagTime = mean(lags.filter(outliers()))
+    const timeDiff = mean(timeDiffs.filter(outliers()))
 
     yield call(websocket.send, action.payload.clientId, {
         type: 'WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED',
-        payload: { lagTime },
+        payload: { timeDiff },
     })
 }
 
