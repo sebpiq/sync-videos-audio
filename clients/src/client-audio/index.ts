@@ -5,6 +5,8 @@ import { getAppState, initialize } from '../redux'
 import rootSaga from './sagas'
 import { LEADER_ID } from '../shared/constants'
 import FollowerStats from '../components/FollowerStats'
+import doPolyfilling from './polyfills'
+doPolyfilling()
 
 ;(window as any).forcePolyfillingAudioWorkletNode = true
 

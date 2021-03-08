@@ -1,6 +1,8 @@
 import pEvent from 'p-event';
 import { addStartButton } from '../components/StartButton';
 import audio from './audio'
+import doPolyfilling from './polyfills'
+doPolyfilling()
 
 ;(window as any).forcePolyfillingAudioWorkletNode = true
 
