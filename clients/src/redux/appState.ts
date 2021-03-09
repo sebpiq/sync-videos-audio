@@ -26,7 +26,9 @@ export interface State {
     audio: {
         context: AudioContext
         playbackNode: PlaybackNodeWorkletType
-        audioBuffer: AudioBuffer
+        audioBuffer: AudioBuffer | null
+        isPollyfilled: boolean,
+        pollyfillSampleCount: number,
     } | null
 }
 

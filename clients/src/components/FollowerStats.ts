@@ -1,7 +1,8 @@
-import { subscribe, getFollowerState } from "../redux"
+import { State } from "../redux/appState"
+import { subscribe, getFollowerState, getAppState } from "../redux"
 import { FollowerState } from "../redux/follower"
 
-const template = (followerState: FollowerState) => `
+const template = (appState: State, followerState: FollowerState) => `
     <table>
         <tr>
             <td>time diff with leader</td>
@@ -9,9 +10,8 @@ const template = (followerState: FollowerState) => `
         </tr>
         <tr>
             <td>polyfilled AudioWorkletNode</td>
-            <td>${(window as any).polyfilledAudioWorkletNode}</td>
+            <td>${appState.audio.isPollyfilled}</td>
         </tr>
-        polyfilledAudioWorkletNode
     </table>
 `
 
@@ -21,7 +21,7 @@ export default (outerContainer: HTMLElement) => {
     subscribe(() => {
         const followerState = getFollowerState()
         if (followerState) {
-            container.innerHTML = template(followerState)
+            container.innerHTML = template(getAppState(), followerState)
         }
     })
 }

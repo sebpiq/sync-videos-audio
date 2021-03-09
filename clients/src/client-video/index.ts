@@ -35,7 +35,7 @@ const main = async () => {
         setInterval(() => {
             ws.send(BROADCAST_ID, {type: 'WEBSOCKET_MESSAGE_TICK', payload: {
                 position: videoElement.currentTime * 1000,
-                localTime: Date.now()
+                timestamp: Date.now()
             }})
         }, config.tickInterval)
     }

@@ -1,4 +1,4 @@
-import { Saga } from 'redux-saga'
+import { Saga, Task } from 'redux-saga'
 import pEvent from 'p-event'
 import { all, call, cancel, fork, select, take, takeEvery, takeLatest } from 'redux-saga/effects'
 import websocket from '../websocket'
@@ -14,6 +14,7 @@ import audio from './audio'
 import { RootState } from '../redux'
 import { FollowerState } from '../redux/follower'
 import DelayButtons from '../components/DelayButtons'
+import { computeCurrentTime } from './PlaybackNode/utils'
 
 function* setAppFirstConnectedSaga() {
     const startButton = addStartButton()
@@ -27,11 +28,14 @@ function* syncAudioSaga() {
     const audio: RootState["appState"]["audio"] = yield select((state: RootState) => state.appState.audio)
     const followerState: FollowerState = yield select((state: RootState) => state.follower)
     if (followerState) {
-        const positionLocalTime = followerState.leader.localTime + followerState.timeDiff
-        const adjustment = (Date.now() - positionLocalTime) + followerState.resyncTimeDiff
-        const currentTime = followerState.leader.position + adjustment
-        console.log('TICK', adjustment)
-        // TODO: Do this calculation in the worklet processor for exactness (+ timestamp should be context time)
+        // This is to account for the delay introduced by the ScriptProcessorNode when polyfill is used
+        let scriptProcessorNodeOffset = 0
+        if (audio.isPollyfilled) {
+            scriptProcessorNodeOffset = 1000 * audio.pollyfillSampleCount / audio.context.sampleRate
+        }
+        const timeDiff = followerState.timeDiff + followerState.resyncTimeDiff
+        const currentTime = computeCurrentTime(followerState.leaderSnapshot, timeDiff) + scriptProcessorNodeOffset
+        // TODO: Do this calculation in the worklet processor for exactness (+ timestamp should be audio context time)
         audio.playbackNode.setCurrentTime(currentTime)
     }
 }
@@ -55,15 +59,16 @@ const takeEveryWebsocketMessage = (messageType: Message['type'], saga: Saga) =>
     takeEvery(messageType, saga)
 
 function* rootSaga() {
-    const timeDiffTask = yield fork(sendBackEveryTimeDiffResponseSaga)
+    const timeDiffTask: Task = yield fork(sendBackEveryTimeDiffResponseSaga)
     yield take('WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED')
     yield cancel(timeDiffTask)
     yield setAppFirstConnectedSaga()
     yield take('WEBSOCKET_MESSAGE_TICK')
     yield call(syncAudioSaga)
-    // yield all([
-    //     takeLatest('WEBSOCKET_MESSAGE_TICK', syncAudioSaga)
-    // ])
+    yield all([
+        takeLatest('WEBSOCKET_MESSAGE_TICK', syncAudioSaga),
+        takeLatest('INCREMENT_RESYNC_TIME_DIFF', syncAudioSaga),
+    ])
 }
 
 export default rootSaga

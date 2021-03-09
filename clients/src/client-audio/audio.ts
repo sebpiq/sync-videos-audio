@@ -28,7 +28,10 @@ const createAudioContext = async (): Promise<AudioContext> => {
     return context
 }
 
-const buildAudioGraph = async (audioContext: AudioContext, audioBuffer: AudioBuffer) => {
+const buildAudioGraph = async (
+    audioContext: AudioContext,
+    audioBuffer: AudioBuffer
+) => {
     audioContext.resume()
     const playbackNode = new PlaybackNodeWorklet(
         audioContext,
@@ -41,13 +44,29 @@ const buildAudioGraph = async (audioContext: AudioContext, audioBuffer: AudioBuf
 const load = async (soundUrl: string): Promise<void> => {
     const context = await createAudioContext()
     const audioBuffer = await loadSound(context, soundUrl)
-    setAppState({ audio: { ...getAppState().audio, context, audioBuffer } })
+    setAppState({
+        audio: {
+            context,
+            audioBuffer,
+            playbackNode: null,
+            isPollyfilled: (window as any).polyfilledAudioWorkletNode,
+            pollyfillSampleCount: (window as any).polyfilledAudioWorkletNodeSampleCount,
+        },
+    })
 }
 
 const start = async () => {
     const { context, audioBuffer } = getAppState().audio
     const playbackNode = await buildAudioGraph(context, audioBuffer)
-    setAppState({ audio: { ...getAppState().audio, playbackNode } })
+    setAppState({
+        audio: {
+            ...getAppState().audio,
+            playbackNode,
+            // It seems polyfilling happens only when first node created
+            isPollyfilled: (window as any).polyfilledAudioWorkletNode,
+            pollyfillSampleCount: (window as any).polyfilledAudioWorkletNodeSampleCount,
+        },
+    })
 }
 
 export default { load, start, createAudioContext, loadSound, buildAudioGraph }

@@ -8,11 +8,7 @@
         "moduleResolution": "node",
         "allowJs": true,
         "lib": ["es2017", "dom"],
-        "sourceMap": true,
-        "baseUrl": ".",
-        "paths": {
-            "*": ["node_modules/*"]
-        }
+        "sourceMap": true
     },
     "include": ["src/**/*"]
 }

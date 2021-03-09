@@ -1,5 +1,12 @@
+// REF : https://github.com/GoogleChromeLabs/audioworklet-polyfill
+// modified version :
+//  - added `polyfilledAudioWorkletNode`
+//  - added `forcePolyfillingAudioWorkletNode`
+//  - changed createScriptProcessor frame count
+
 !(function () {
     window.polyfilledAudioWorkletNode = false
+    window.polyfilledAudioWorkletNodeSampleCount = 16384
     var e,
         t = [];
     function r(e) {
@@ -26,7 +33,8 @@
         ((self.AudioWorkletNode = function (t, o, i) {
             window.polyfilledAudioWorkletNode = true
             var s = n(t)[o],
-                a = t.createScriptProcessor(16384, 2, i && i.outputChannelCount ? i.outputChannelCount[0] : 2);
+                a = t.createScriptProcessor(window.polyfilledAudioWorkletNodeSampleCount, 
+                    2, i && i.outputChannelCount ? i.outputChannelCount[0] : 2);
             if (((a.parameters = new Map()), s.properties))
                 for (var u = 0; u < s.properties.length; u++) {
                     var c = s.properties[u],

@@ -30,6 +30,8 @@ TODO
 =====
 
 - web audio polyfills + normalize prefixes
+- play / pause / resync, etc ...
+- loop
 - add offset for ScriptProcessorNode when used
 - download audio by chunks
 - save server state

@@ -3,7 +3,7 @@ import { all, call, delay, race, take, takeEvery } from 'redux-saga/effects'
 import websocket from '../websocket'
 import { default as outliers } from 'outliers'
 import mean from 'lodash.mean'
-import { FollowerConnectMessage, Message } from '../shared/websocket-messages'
+import { FollowerConnectMessage, Message, TimeDiffResponseMessage } from '../shared/websocket-messages'
 import config from '../config'
 import { ClientId } from '../shared/types'
 
@@ -31,7 +31,7 @@ function* newFollowerSaga(action: FollowerConnectMessage) {
     for (let i = 0; i < config.timeDiff.queryCount; i++) {
         yield delay(DELAY_BETWEEN_QUERIES)
         const leaderTimestamp = Date.now()
-        const timeDiffResponse = yield call(
+        const timeDiffResponse: TimeDiffResponseMessage | null = yield call(
             sendTimeDiffQuerySaga,
             leaderTimestamp,
             action.payload.clientId
@@ -47,8 +47,8 @@ function* newFollowerSaga(action: FollowerConnectMessage) {
         const followerTimestamp = timeDiffResponse.payload.followerTimestamp - roundtripTime / 2
         // This time diff direclty gives the offset that should be applied to follower if it wants
         // to get it sync with leader
-        timeDiffs.push(leaderTimestamp - followerTimestamp)
-        console.log(leaderTimestamp - followerTimestamp)
+        timeDiffs.push(followerTimestamp - leaderTimestamp)
+        console.log(followerTimestamp - leaderTimestamp)
     }
 
     const timeDiff = mean(timeDiffs.filter(outliers()))

@@ -3,7 +3,7 @@
 import { incrementResyncTimeDiff } from "../redux/follower"
 import { dispatch, getFollowerState, subscribe } from "../redux"
 
-const DELAY_INCREMENT_MS = 20
+const DELAY_INCREMENT_MS = 500
 
 const formatCurrentDelay = (delayMs: number) =>
     `${Math.round(delayMs) / 1000} seconds`

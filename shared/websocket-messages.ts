@@ -1,11 +1,8 @@
-import { ClientId } from './types'
+import { ClientId, Snapshot } from './types'
 
 export interface TickMessage {
     type: 'WEBSOCKET_MESSAGE_TICK'
-    payload: {
-        position: number
-        localTime: number
-    }
+    payload: Snapshot
 }
 
 export interface FollowerConnectMessage {

@@ -15,7 +15,7 @@ const main = async () => {
     console.log('[main] loading + decoding sound')
     const audioBuffer = await audio.loadSound(audioContext, '/media/audio.mp3')
     console.log(`[main] decoding sound | ${audioBuffer.numberOfChannels} channels | ${audioBuffer.length}`)
-    const playbackNode = await audio.buildAudioGraph(audioContext, audioBuffer)
+    await audio.buildAudioGraph(audioContext, audioBuffer)
 
 
     // const message = await pEvent(ws.events, 'tick') as TickMessage

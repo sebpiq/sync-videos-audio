@@ -1,4 +1,3 @@
-import { channel } from 'redux-saga'
 import config from '../../config'
 import { PlaybackNodeMessageData } from './types'
 
@@ -23,6 +22,7 @@ export default class PlaybackNodeWorklet extends AudioWorkletNode {
 // traditional way, `this` doesn't have the additional methods.
 const Methods = {
     _constructor(audioBuffer: AudioBuffer, channelCount: number) {
+        console.log(`Sample rate context ${this.context.sampleRate} | buffer ${audioBuffer.sampleRate}`)
         const audioArrays: Array<Float32Array> = []
         for (let ch = 0; ch < channelCount; ch++) {
            const audioArray = new Float32Array(audioBuffer.length)
