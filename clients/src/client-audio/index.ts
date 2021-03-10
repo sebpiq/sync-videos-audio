@@ -21,10 +21,6 @@ const main = async () => {
     })
 
     FollowerStats(document.body)
-
-    // const message = await pEvent(ws.events, 'tick') as TickMessage
-    // state.refreshSyncState(message.payload.currentTime)
-    // state.get().audio.playbackNode.setCurrentTime(message.payload.currentTime)
 }
 
 main().then(() => {

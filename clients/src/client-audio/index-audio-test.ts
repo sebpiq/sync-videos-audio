@@ -16,11 +16,6 @@ const main = async () => {
     const audioBuffer = await audio.loadSound(audioContext, '/media/audio.mp3')
     console.log(`[main] decoding sound | ${audioBuffer.numberOfChannels} channels | ${audioBuffer.length}`)
     await audio.buildAudioGraph(audioContext, audioBuffer)
-
-
-    // const message = await pEvent(ws.events, 'tick') as TickMessage
-    // state.refreshSyncState(message.payload.currentTime)
-    // state.get().audio.playbackNode.setCurrentTime(message.payload.currentTime)
 }
 
 main().then(() => {

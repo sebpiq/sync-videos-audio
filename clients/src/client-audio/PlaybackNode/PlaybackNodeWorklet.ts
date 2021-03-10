@@ -1,4 +1,5 @@
 import config from '../../config'
+import { MediaStatus } from '../../shared/types'
 import { PlaybackNodeMessageData } from './types'
 
 export default class PlaybackNodeWorklet extends AudioWorkletNode {
@@ -38,6 +39,14 @@ const Methods = {
             (timeMs / 1000) * this.context.sampleRate
         )
         this._postMessage({ readPosition })
+    },
+
+    play() {
+        this._postMessage({ status: MediaStatus.PLAYING })
+    },
+
+    pause() {
+        this._postMessage({ status: MediaStatus.NOT_PLAYING })
     },
 
     _postMessage(messageData: PlaybackNodeMessageData) {

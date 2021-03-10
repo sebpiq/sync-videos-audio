@@ -29,7 +29,7 @@ export interface State {
         audioBuffer: AudioBuffer | null
         isPollyfilled: boolean,
         pollyfillSampleCount: number,
-    } | null
+    } | null,
 }
 
 const initialState: State = {

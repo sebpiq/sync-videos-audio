@@ -1,14 +1,19 @@
 import config from '../../config'
+import { MediaStatus } from '../../shared/types'
 import { PlaybackNodeMessageData } from './types'
 
 class PlaybackNodeProcessor extends AudioWorkletProcessor {
+    private playing: boolean
     private audioArrays: Array<Float32Array>
+    private zerosArray: Float32Array
     private readPosition: number
     private channelCount: number | null
 
     constructor() {
         super()
+        this.playing = false
         this.audioArrays = null
+        this.zerosArray = null
         this.channelCount = null
         this.readPosition = 0
         this.port.onmessage = (event) => {
@@ -33,6 +38,10 @@ class PlaybackNodeProcessor extends AudioWorkletProcessor {
                     )
                 }
             }
+
+            if ('status' in messageData) {
+                this.playing = (messageData.status === MediaStatus.PLAYING)
+            }
         }
     }
 
@@ -41,9 +50,20 @@ class PlaybackNodeProcessor extends AudioWorkletProcessor {
         outputs: Float32Array[][],
         parameters: Record<string, Float32Array>
     ) {
-        if (!this.audioArrays) {
+        if (this.zerosArray === null) {
+            this.zerosArray = new Float32Array(outputs[0][0].length)
+        }
+
+        // Returning zeros if not playing or no data yet
+        if (!this.playing || !this.audioArrays) {
+            const output = outputs[0]
+            for (let channel = 0; channel < this.channelCount; channel++) {
+                output[channel].set(this.zerosArray)
+            }
             return true
         }
+
+        // Returning the sound at current position
         const output = outputs[0]
         const outputLength = output[0].length
         for (let channel = 0; channel < this.channelCount; channel++) {

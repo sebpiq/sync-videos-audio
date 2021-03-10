@@ -18,6 +18,7 @@ import { RootState } from '../redux'
 import { FollowerState, FOLLOWER_INCREMENT_RESYNC_TIME_DIFF } from '../redux/follower'
 import DelayButtons from '../components/DelayButtons'
 import { computeCurrentTime } from './PlaybackNode/utils'
+import { MediaStatus } from '../shared/types'
 
 function* setAppFirstConnectedSaga() {
     const startButton = addStartButton()
@@ -31,6 +32,13 @@ function* syncAudioSaga() {
     const audio: RootState["appState"]["audio"] = yield select((state: RootState) => state.appState.audio)
     const followerState: FollowerState = yield select((state: RootState) => state.follower)
     if (followerState) {
+        // Sync playing state
+        if (followerState.leaderMediaStatus === MediaStatus.NOT_PLAYING) {
+            audio.playbackNode.pause()
+        } else {
+            audio.playbackNode.play()
+        }
+
         // This is to account for the delay introduced by the ScriptProcessorNode when polyfill is used
         let scriptProcessorNodeOffset = 0
         if (audio.isPollyfilled) {
