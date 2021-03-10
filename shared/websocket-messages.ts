@@ -1,38 +1,38 @@
 import { ClientId, Snapshot } from './types'
 
-export const TYPE_WEBSOCKET_MESSAGE_TICK = 'WEBSOCKET_MESSAGE_TICK'
-export const TYPE_WEBSOCKET_MESSAGE_FOLLOWER_CONNECT = 'WEBSOCKET_MESSAGE_FOLLOWER_CONNECT'
-export const TYPE_WEBSOCKET_MESSAGE_LEADER_CONNECT = 'WEBSOCKET_MESSAGE_LEADER_CONNECT'
-export const TYPE_WEBSOCKET_MESSAGE_TIME_DIFF_QUERY = 'WEBSOCKET_MESSAGE_TIME_DIFF_QUERY'
-export const TYPE_WEBSOCKET_MESSAGE_TIME_DIFF_RESPONSE = 'WEBSOCKET_MESSAGE_TIME_DIFF_RESPONSE'
-export const TYPE_WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED = 'WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED'
+export const WEBSOCKET_MESSAGE_TICK = 'WEBSOCKET_MESSAGE_TICK'
+export const WEBSOCKET_MESSAGE_FOLLOWER_CONNECT = 'WEBSOCKET_MESSAGE_FOLLOWER_CONNECT'
+export const WEBSOCKET_MESSAGE_LEADER_CONNECT = 'WEBSOCKET_MESSAGE_LEADER_CONNECT'
+export const WEBSOCKET_MESSAGE_TIME_DIFF_QUERY = 'WEBSOCKET_MESSAGE_TIME_DIFF_QUERY'
+export const WEBSOCKET_MESSAGE_TIME_DIFF_RESPONSE = 'WEBSOCKET_MESSAGE_TIME_DIFF_RESPONSE'
+export const WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED = 'WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED'
 
 export interface TickMessage {
-    type: typeof TYPE_WEBSOCKET_MESSAGE_TICK
+    type: typeof WEBSOCKET_MESSAGE_TICK
     payload: Snapshot
 }
 
 export interface FollowerConnectMessage {
-    type: typeof TYPE_WEBSOCKET_MESSAGE_FOLLOWER_CONNECT
+    type: typeof WEBSOCKET_MESSAGE_FOLLOWER_CONNECT
     payload: {
         clientId: ClientId
     }
 }
 
 export interface LeaderConnectMessage {
-    type: typeof TYPE_WEBSOCKET_MESSAGE_LEADER_CONNECT
+    type: typeof WEBSOCKET_MESSAGE_LEADER_CONNECT
     payload: {}
 }
 
 export interface TimeDiffQueryMessage {
-    type: typeof TYPE_WEBSOCKET_MESSAGE_TIME_DIFF_QUERY
+    type: typeof WEBSOCKET_MESSAGE_TIME_DIFF_QUERY
     payload: {
         leaderTimestamp: number
     }
 }
 
 export interface TimeDiffResponseMessage {
-    type: typeof TYPE_WEBSOCKET_MESSAGE_TIME_DIFF_RESPONSE
+    type: typeof WEBSOCKET_MESSAGE_TIME_DIFF_RESPONSE
     payload: {
         leaderTimestamp: number
         followerTimestamp: number
@@ -40,7 +40,7 @@ export interface TimeDiffResponseMessage {
 }
 
 export interface FollowerConnectedMessage {
-    type: typeof TYPE_WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED
+    type: typeof WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED
     payload: {
         timeDiff: number
     }

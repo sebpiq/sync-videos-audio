@@ -6,7 +6,7 @@ import rootSaga from './sagas'
 import { LEADER_ID } from '../shared/constants'
 import FollowerStats from '../components/FollowerStats'
 import doPolyfilling from './polyfills'
-import { TYPE_WEBSOCKET_MESSAGE_FOLLOWER_CONNECT } from '../shared/websocket-messages'
+import { WEBSOCKET_MESSAGE_FOLLOWER_CONNECT } from '../shared/websocket-messages'
 doPolyfilling()
 
 ;(window as any).forcePolyfillingAudioWorkletNode = true
@@ -16,7 +16,7 @@ const main = async () => {
     await ws.open(config.webSocket.url)
     await audio.load('/media/audio.mp3')
     await ws.send(LEADER_ID, {
-        type: TYPE_WEBSOCKET_MESSAGE_FOLLOWER_CONNECT,
+        type: WEBSOCKET_MESSAGE_FOLLOWER_CONNECT,
         payload: { clientId: getAppState().clientId },
     })
 
