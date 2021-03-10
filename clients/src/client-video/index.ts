@@ -49,7 +49,7 @@ const main = async () => {
     videoElement.addEventListener('ended', sendTick)
 
     const startTick = () =>
-        setInterval(() => sendTick, config.tickInterval)
+        setInterval(sendTick, config.tickInterval)
     startTick()
 }
 

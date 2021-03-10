@@ -30,7 +30,6 @@ const Methods = {
            audioArrays.push(audioArray)
            audioBuffer.copyFromChannel(audioArray, ch, 0)
         }
-        console.log(audioArrays, channelCount)
         this._postMessage({ audioArrays })
     },
 

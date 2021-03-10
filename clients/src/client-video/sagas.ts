@@ -48,7 +48,6 @@ function* newFollowerSaga(action: FollowerConnectMessage) {
         // This time diff direclty gives the offset that should be applied to follower if it wants
         // to get it sync with leader
         timeDiffs.push(followerTimestamp - leaderTimestamp)
-        console.log(followerTimestamp - leaderTimestamp)
     }
 
     const timeDiff = mean(timeDiffs.filter(outliers()))

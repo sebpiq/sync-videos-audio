@@ -31,7 +31,7 @@ TODO
 
 V web audio polyfills + normalize prefixes
 V add offset for ScriptProcessorNode when used
-- play / pause / resync, etc ...
+V play / pause / resync, etc ...
 - check time drift video and audio
 - loop
 - download audio by chunks

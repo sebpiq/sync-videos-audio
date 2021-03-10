@@ -40,6 +40,10 @@ class PlaybackNodeProcessor extends AudioWorkletProcessor {
             }
 
             if ('status' in messageData) {
+                // Make sure to initialize read position when (re)starting to play
+                if (!this.playing && 'readPosition' in messageData) {
+                    this.readPosition = messageData.readPosition
+                }
                 this.playing = (messageData.status === MediaStatus.PLAYING)
             }
         }
