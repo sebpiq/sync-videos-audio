@@ -5,6 +5,7 @@ import ws from '../websocket'
 import { initialize, setAppState } from '../redux'
 import rootSaga from './sagas'
 import { BROADCAST_ID, LEADER_ID, SERVER_ID } from '../shared/constants'
+import { TYPE_WEBSOCKET_MESSAGE_LEADER_CONNECT, TYPE_WEBSOCKET_MESSAGE_TICK } from '../shared/websocket-messages'
 
 const main = async () => {
     initialize(rootSaga)
@@ -12,7 +13,7 @@ const main = async () => {
 
     await ws.open(config.webSocket.url)
     await ws.send(SERVER_ID, {
-        type: 'WEBSOCKET_MESSAGE_LEADER_CONNECT',
+        type: TYPE_WEBSOCKET_MESSAGE_LEADER_CONNECT,
         payload: {},
     })
 
@@ -33,7 +34,7 @@ const main = async () => {
 
     const startTick = (videoElement: HTMLVideoElement) => {
         setInterval(() => {
-            ws.send(BROADCAST_ID, {type: 'WEBSOCKET_MESSAGE_TICK', payload: {
+            ws.send(BROADCAST_ID, {type: TYPE_WEBSOCKET_MESSAGE_TICK, payload: {
                 position: videoElement.currentTime * 1000,
                 timestamp: Date.now()
             }})

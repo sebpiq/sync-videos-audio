@@ -7,12 +7,15 @@ import { addStartButton } from '../components/StartButton'
 import {
     TimeDiffQueryMessage,
     TimeDiffResponseMessage,
+    TYPE_WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED,
+    TYPE_WEBSOCKET_MESSAGE_TICK,
+    TYPE_WEBSOCKET_MESSAGE_TIME_DIFF_QUERY,
 } from '../shared/websocket-messages'
 import { Message } from '../shared/websocket-messages'
 import { LEADER_ID } from '../shared/constants'
 import audio from './audio'
 import { RootState } from '../redux'
-import { FollowerState } from '../redux/follower'
+import { FollowerState, INCREMENT_RESYNC_TIME_DIFF } from '../redux/follower'
 import DelayButtons from '../components/DelayButtons'
 import { computeCurrentTime } from './PlaybackNode/utils'
 
@@ -50,7 +53,7 @@ function* sendBackTimeDiffResponseSaga(TimeDiffQueryMessage: TimeDiffQueryMessag
 
 function* sendBackEveryTimeDiffResponseSaga() {
     yield takeEveryWebsocketMessage(
-        'WEBSOCKET_MESSAGE_TIME_DIFF_QUERY',
+        TYPE_WEBSOCKET_MESSAGE_TIME_DIFF_QUERY,
         sendBackTimeDiffResponseSaga
     )
 }
@@ -60,14 +63,14 @@ const takeEveryWebsocketMessage = (messageType: Message['type'], saga: Saga) =>
 
 function* rootSaga() {
     const timeDiffTask: Task = yield fork(sendBackEveryTimeDiffResponseSaga)
-    yield take('WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED')
+    yield take(TYPE_WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED)
     yield cancel(timeDiffTask)
     yield setAppFirstConnectedSaga()
-    yield take('WEBSOCKET_MESSAGE_TICK')
+    yield take(TYPE_WEBSOCKET_MESSAGE_TICK)
     yield call(syncAudioSaga)
     yield all([
-        takeLatest('WEBSOCKET_MESSAGE_TICK', syncAudioSaga),
-        takeLatest('INCREMENT_RESYNC_TIME_DIFF', syncAudioSaga),
+        takeLatest(TYPE_WEBSOCKET_MESSAGE_TICK, syncAudioSaga),
+        takeLatest(INCREMENT_RESYNC_TIME_DIFF, syncAudioSaga),
     ])
 }
 

@@ -1,8 +1,8 @@
 import { Snapshot } from '../shared/types'
-import { Message as WebSocketMessage } from '../shared/websocket-messages'
+import { Message as WebSocketMessage, TYPE_WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED, TYPE_WEBSOCKET_MESSAGE_TICK } from '../shared/websocket-messages'
 
 // ------------- Action Types ------------ //
-const INCREMENT_RESYNC_TIME_DIFF = 'INCREMENT_RESYNC_TIME_DIFF'
+export const INCREMENT_RESYNC_TIME_DIFF = 'INCREMENT_RESYNC_TIME_DIFF'
 
 interface IncrementResyncTimeDiff {
     type: typeof INCREMENT_RESYNC_TIME_DIFF
@@ -30,14 +30,14 @@ const initialState: FollowerState = null
 // ---------------- Reducer -------------- //
 export const followerReducer = (state = initialState, action: ActionTypes): FollowerState => {
     switch(action.type) {
-        case 'WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED':
+        case TYPE_WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED:
             return {
                 timeDiff: action.payload.timeDiff, 
                 leaderSnapshot: null,
                 resyncTimeDiff: 0
             }
         
-        case 'WEBSOCKET_MESSAGE_TICK':
+        case TYPE_WEBSOCKET_MESSAGE_TICK:
             return {
                 ...state,
                 leaderSnapshot: action.payload

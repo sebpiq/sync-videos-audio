@@ -5,7 +5,7 @@ import http from 'http'
 import state from './state'
 import config from './config'
 import pEvent from 'p-event'
-import { FollowerConnectMessage, unpackMeta } from './shared/websocket-messages'
+import { FollowerConnectMessage, TYPE_WEBSOCKET_MESSAGE_FOLLOWER_CONNECT, TYPE_WEBSOCKET_MESSAGE_LEADER_CONNECT, unpackMeta } from './shared/websocket-messages'
 import { BROADCAST_ID, LEADER_ID, SERVER_ID } from './shared/constants'
 
 const createWebSocketServer = async () => {
@@ -22,13 +22,13 @@ const createWebSocketServer = async () => {
 
             // Save the client with its id in the map
             switch (messageType) {
-                case 'WEBSOCKET_MESSAGE_FOLLOWER_CONNECT':
+                case TYPE_WEBSOCKET_MESSAGE_FOLLOWER_CONNECT:
                     const message: FollowerConnectMessage = JSON.parse(
                         messageStr
                     )
                     clientIds[message.payload.clientId] = client
                     break
-                case 'WEBSOCKET_MESSAGE_LEADER_CONNECT':
+                case TYPE_WEBSOCKET_MESSAGE_LEADER_CONNECT:
                     clientIds[LEADER_ID] = client
                     break
             }

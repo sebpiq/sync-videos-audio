@@ -29,18 +29,19 @@ docker run --rm \
 TODO
 =====
 
-- web audio polyfills + normalize prefixes
+V web audio polyfills + normalize prefixes
+V add offset for ScriptProcessorNode when used
 - play / pause / resync, etc ...
+- check time drift video and audio
 - loop
-- add offset for ScriptProcessorNode when used
 - download audio by chunks
+- UI 
 - save server state
 - server restart
 - client auto reconnect
-- mp3 VS ogg supported / mp4 VS webm
 - start / stop / pause video, how does it affect the sync state
 - drop-in video of your choice
 - dockerize
-- check time drift video and audio
+- mp3 VS ogg supported / mp4 VS webm
 - parametrize config : `export $(grep -v '^#' .env | xargs)` REF : https://stackoverflow.com/questions/19331497/set-environment-variables-from-file-of-key-value-pairs
 - Worklet polyfill use worklet when working well
