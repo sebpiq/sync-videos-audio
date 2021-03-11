@@ -1,5 +1,5 @@
 import pEvent from 'p-event';
-import { addStartButton } from '../components/StartButton';
+import StartButton from '../components/StartButton';
 import audio from './audio'
 import doPolyfilling from './polyfills'
 doPolyfilling()
@@ -7,7 +7,7 @@ doPolyfilling()
 ;(window as any).forcePolyfillingAudioWorkletNode = true
 
 const main = async () => {
-    const startButton = addStartButton()
+    const startButton = StartButton(document.body)
     await pEvent(startButton, 'click')
 
     const audioContext = await audio.createAudioContext()

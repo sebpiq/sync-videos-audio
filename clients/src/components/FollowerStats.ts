@@ -18,10 +18,13 @@ const template = (appState: State, followerState: FollowerState) => `
 export default (outerContainer: HTMLElement) => {
     const container = document.createElement('div')
     outerContainer.appendChild(container)
-    subscribe(() => {
+    const update = () => {
         const followerState = getFollowerState()
         if (followerState) {
             container.innerHTML = template(getAppState(), followerState)
         }
-    })
+    }
+    update()
+    subscribe(update)
+    return container
 }

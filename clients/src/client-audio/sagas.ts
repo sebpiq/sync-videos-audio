@@ -3,7 +3,6 @@ import pEvent from 'p-event'
 import { all, call, cancel, fork, select, take, takeEvery, takeLatest } from 'redux-saga/effects'
 import websocket from '../websocket'
 import timeDiff from '../time-diff'
-import { addStartButton } from '../components/StartButton'
 import {
     TimeDiffQueryMessage,
     TimeDiffResponseMessage,
@@ -19,11 +18,13 @@ import { FollowerState, FOLLOWER_INCREMENT_RESYNC_TIME_DIFF } from '../redux/fol
 import DelayButtons from '../components/DelayButtons'
 import { computeCurrentTime } from './PlaybackNode/utils'
 import { MediaStatus } from '../shared/types'
+import StartButton from '../components/StartButton'
 
 function* setAppFirstConnectedSaga() {
-    const startButton = addStartButton()
+    const startButton = StartButton(document.body)
     yield pEvent(startButton, 'click')
     yield audio.start()
+    startButton.remove()
     DelayButtons(document.body)
     console.log('app first connected')
 }

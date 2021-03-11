@@ -32,14 +32,14 @@ TODO
 V web audio polyfills + normalize prefixes
 V add offset for ScriptProcessorNode when used
 V play / pause / resync, etc ...
-- check time drift video and audio
+V check time drift video and audio
+- UI 
 - loop
 - download audio by chunks
-- UI 
+- client auto reconnect
+
 - save server state
 - server restart
-- client auto reconnect
-- start / stop / pause video, how does it affect the sync state
 - drop-in video of your choice
 - dockerize
 - mp3 VS ogg supported / mp4 VS webm
