@@ -1,4 +1,4 @@
-import { setAppState, getAppState } from '../redux'
+import { setAppState, getAppState, setAudioState, getAudioState } from '../redux'
 import config from '../config'
 import PlaybackNodeWorklet, {
     PlaybackNodeWorkletType,
@@ -44,28 +44,25 @@ const buildAudioGraph = async (
 const load = async (soundUrl: string): Promise<void> => {
     const context = await createAudioContext()
     const audioBuffer = await loadSound(context, soundUrl)
-    setAppState({
-        audio: {
-            context,
-            audioBuffer,
-            playbackNode: null,
-            isPollyfilled: (window as any).polyfilledAudioWorkletNode,
-            pollyfillSampleCount: (window as any).polyfilledAudioWorkletNodeSampleCount,
-        },
+    setAudioState({
+        context,
+        audioBuffer,
+        playbackNode: null,
+        isPollyfilled: (window as any).polyfilledAudioWorkletNode,
+        pollyfillSampleCount: (window as any).polyfilledAudioWorkletNodeSampleCount,
+        isStarted: false,
     })
 }
 
 const start = async () => {
-    const { context, audioBuffer } = getAppState().audio
+    const { context, audioBuffer } = getAudioState()
     const playbackNode = await buildAudioGraph(context, audioBuffer)
-    setAppState({
-        audio: {
-            ...getAppState().audio,
-            playbackNode,
-            // It seems polyfilling happens only when first node created
-            isPollyfilled: (window as any).polyfilledAudioWorkletNode,
-            pollyfillSampleCount: (window as any).polyfilledAudioWorkletNodeSampleCount,
-        },
+    setAudioState({
+        ...getAudioState(),
+        playbackNode,
+        // It seems polyfilling happens only when first node created
+        isPollyfilled: (window as any).polyfilledAudioWorkletNode,
+        pollyfillSampleCount: (window as any).polyfilledAudioWorkletNodeSampleCount,
     })
 }
 

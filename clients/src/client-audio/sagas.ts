@@ -1,6 +1,5 @@
 import { Saga, Task } from 'redux-saga'
-import pEvent from 'p-event'
-import { all, call, cancel, fork, select, take, takeEvery, takeLatest } from 'redux-saga/effects'
+import { all, call, cancel, fork, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects'
 import websocket from '../websocket'
 import timeDiff from '../time-diff'
 import {
@@ -15,22 +14,12 @@ import { LEADER_ID } from '../shared/constants'
 import audio from './audio'
 import { RootState } from '../redux'
 import { FollowerState, FOLLOWER_INCREMENT_RESYNC_TIME_DIFF } from '../redux/follower'
-import DelayButtons from '../components/DelayButtons'
 import { computeCurrentTime } from './PlaybackNode/utils'
 import { MediaStatus } from '../shared/types'
-import StartButton from '../components/StartButton'
-
-function* setAppFirstConnectedSaga() {
-    const startButton = StartButton(document.body)
-    yield pEvent(startButton, 'click')
-    yield audio.start()
-    startButton.remove()
-    DelayButtons(document.body)
-    console.log('app first connected')
-}
+import { AUDIO_START, setAudioStarted } from '../redux/audio'
 
 function* syncAudioSaga() {
-    const audio: RootState["appState"]["audio"] = yield select((state: RootState) => state.appState.audio)
+    const audio: RootState["audio"] = yield select((state: RootState) => state.audio)
     const followerState: FollowerState = yield select((state: RootState) => state.follower)
     if (followerState) {
         // Sync playing state
@@ -56,7 +45,6 @@ function* sendBackTimeDiffResponseSaga(TimeDiffQueryMessage: TimeDiffQueryMessag
     const TimeDiffResponseMessage: TimeDiffResponseMessage = timeDiff.makeTimeDiffResponseMessage(
         TimeDiffQueryMessage
     )
-    console.log(TimeDiffQueryMessage)
     websocket.send(LEADER_ID, TimeDiffResponseMessage)
 }
 
@@ -71,10 +59,17 @@ const takeEveryWebsocketMessage = (messageType: Message['type'], saga: Saga) =>
     takeEvery(messageType, saga)
 
 function* rootSaga() {
+    // Do the connection / sync with the leader
     const timeDiffTask: Task = yield fork(sendBackEveryTimeDiffResponseSaga)
     yield take(WEBSOCKET_MESSAGE_FOLLOWER_CONNECTED)
     yield cancel(timeDiffTask)
-    yield setAppFirstConnectedSaga()
+
+    // Start audio
+    yield take(AUDIO_START)
+    yield audio.start()
+    yield put(setAudioStarted())
+
+    // Wait for tick to synchronise audio
     yield take(WEBSOCKET_MESSAGE_TICK)
     yield call(syncAudioSaga)
     yield all([

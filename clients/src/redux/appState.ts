@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
 import ReconnectingWebSocket from 'reconnecting-websocket'
-import { PlaybackNodeWorkletType } from '../client-audio/PlaybackNode/PlaybackNodeWorklet'
 import { ClientId } from '../shared/types'
 
 // ------------- Action Types ------------ //
@@ -23,19 +22,11 @@ export const set = (values: Partial<State>): ActionTypes => ({
 export interface State {
     clientId: ClientId
     webSocket: ReconnectingWebSocket | null
-    audio: {
-        context: AudioContext
-        playbackNode: PlaybackNodeWorkletType
-        audioBuffer: AudioBuffer | null
-        isPollyfilled: boolean,
-        pollyfillSampleCount: number,
-    } | null,
 }
 
 const initialState: State = {
     clientId: uuidv4(),
     webSocket: null,
-    audio: null,
 }
 
 // ---------------- Reducer -------------- //

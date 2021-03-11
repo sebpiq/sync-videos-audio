@@ -1,4 +1,6 @@
 import jss from "jss"
+import { dispatch } from "../../redux"
+import { setPage } from "../../redux/navigation"
 
 const {classes} = jss.createStyleSheet({
     container: {
@@ -27,7 +29,7 @@ const {classes} = jss.createStyleSheet({
 const template = () => `
     <div class="${classes.container}">
         <button class="${classes.button}">
-            Start
+            Sound not in sync ?
         </button>
     </div>
 `
@@ -37,5 +39,7 @@ export default (outerContainer: HTMLElement) => {
     container.innerHTML = template()
     const elem = container.children[0]
     outerContainer.appendChild(elem)
+    const button = elem.querySelector('button')
+    button.addEventListener('click', () => dispatch(setPage('resync')))
     return elem as HTMLElement
 }
