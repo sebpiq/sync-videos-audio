@@ -33,10 +33,10 @@ V web audio polyfills + normalize prefixes
 V add offset for ScriptProcessorNode when used
 V play / pause / resync, etc ...
 V check time drift video and audio
-- UI 
-- loop
+V UI 
+V loop
+V client auto reconnect
 - download audio by chunks
-- client auto reconnect
 
 - save server state
 - server restart
