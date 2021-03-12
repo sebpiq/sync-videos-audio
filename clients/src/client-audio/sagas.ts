@@ -16,10 +16,11 @@ import { RootState } from '../redux'
 import { FollowerState, FOLLOWER_INCREMENT_RESYNC_TIME_DIFF } from '../redux/follower'
 import { computeCurrentTime } from './PlaybackNode/utils'
 import { MediaStatus } from '../shared/types'
-import { AUDIO_START, setAudioStarted } from '../redux/audio'
+import { AudioState, AUDIO_START, setAudioStarted } from '../redux/audio'
+import config from '../config'
 
 function* syncAudioSaga() {
-    const audio: RootState["audio"] = yield select((state: RootState) => state.audio)
+    const audio: AudioState = yield select((state: RootState) => state.audio)
     const followerState: FollowerState = yield select((state: RootState) => state.follower)
     if (followerState) {
         // Sync playing state
@@ -34,11 +35,19 @@ function* syncAudioSaga() {
         if (audio.isPollyfilled) {
             scriptProcessorNodeOffset = 1000 * audio.pollyfillSampleCount / audio.context.sampleRate
         }
-        const timeDiff = followerState.timeDiff + followerState.resyncTimeDiff
-        const currentTime = computeCurrentTime(followerState.leaderSnapshot, timeDiff) + scriptProcessorNodeOffset
+        const currentTime = computeCurrentTime(followerState.leaderSnapshot, followerState.timeDiff) 
+            + scriptProcessorNodeOffset
+            + (audio.context.baseLatency || 0) * 1000
+            + config.audio.arbitraryLatency
         // TODO: Do this calculation in the worklet processor for exactness (+ timestamp should be audio context time)
         audio.playbackNode.setCurrentTime(currentTime)
     }
+}
+
+function* sendManualResyncSaga() {
+    const followerState: RootState["follower"] = yield select((state: RootState) => state.follower)
+    const audio: AudioState = yield select((state: RootState) => state.audio)
+    audio.playbackNode.sendManualResync(followerState.resyncTimeDiff)
 }
 
 function* sendBackTimeDiffResponseSaga(TimeDiffQueryMessage: TimeDiffQueryMessage) {
@@ -74,7 +83,7 @@ function* rootSaga() {
     yield call(syncAudioSaga)
     yield all([
         takeLatest(WEBSOCKET_MESSAGE_TICK, syncAudioSaga),
-        takeLatest(FOLLOWER_INCREMENT_RESYNC_TIME_DIFF, syncAudioSaga),
+        takeLatest(FOLLOWER_INCREMENT_RESYNC_TIME_DIFF, sendManualResyncSaga),
     ])
 }
 

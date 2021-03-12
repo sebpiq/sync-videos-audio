@@ -34,10 +34,15 @@ const Methods = {
     },
 
     setCurrentTime(timeMs: number) {
-        const readPosition = Math.round(
-            (timeMs / 1000) * this.context.sampleRate
-        )
-        this._postMessage({ readPosition })
+        this._postMessage({ 
+            readPosition: this._msToFrames(timeMs) 
+        })
+    },
+
+    sendManualResync(timeMs: number) {
+        this._postMessage({
+            manualResync: this._msToFrames(timeMs)
+        })
     },
 
     play() {
@@ -46,6 +51,12 @@ const Methods = {
 
     pause() {
         this._postMessage({ status: MediaStatus.NOT_PLAYING })
+    },
+
+    _msToFrames(timeMs: number) {
+        return Math.round(
+            (timeMs / 1000) * this.context.sampleRate
+        )
     },
 
     _postMessage(messageData: PlaybackNodeMessageData) {

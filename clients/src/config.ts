@@ -9,7 +9,9 @@ export default {
     audio: {
         channelCount: 2,
         // Max drift between audio playback and video, before resyncing (in samples)
-        maxDrift: 10000
+        maxDrift: 10000,
+        // Since we can't estimate audio latency, we add this systematically as an average guess (in milliseconds)
+        arbitraryLatency: 200
     },
     timeDiff: {
         queryCount: 20,

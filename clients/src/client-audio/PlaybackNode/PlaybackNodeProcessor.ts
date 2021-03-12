@@ -1,21 +1,18 @@
 import config from '../../config'
 import { MediaStatus } from '../../shared/types'
 import { PlaybackNodeMessageData } from './types'
+import { applyManualResync } from './utils'
 
 class PlaybackNodeProcessor extends AudioWorkletProcessor {
-    private playing: boolean
-    private audioArrays: Array<Float32Array>
-    private zerosArray: Float32Array
-    private readPosition: number
-    private channelCount: number | null
+    private playing: boolean = false
+    private audioArrays: Array<Float32Array> = null
+    private zerosArray: Float32Array = null
+    private readPosition: number = 0
+    private channelCount: number | null = null
+    private manualResync: number = 0
 
     constructor() {
         super()
-        this.playing = false
-        this.audioArrays = null
-        this.zerosArray = null
-        this.channelCount = null
-        this.readPosition = 0
         this.port.onmessage = (event) => {
             const messageData: PlaybackNodeMessageData = event.data
 
@@ -24,6 +21,13 @@ class PlaybackNodeProcessor extends AudioWorkletProcessor {
                 this.channelCount = messageData.audioArrays.length
                 console.log(
                     `[PlaybackNodeProcessor] audioArrays | channels ${this.channelCount} | length ${this.audioArrays[0].length}`
+                )
+            }
+
+            if ('manualResync' in messageData) {
+                this.manualResync = messageData.manualResync
+                console.log(
+                    `[PlaybackNodeProcessor] manualResync ${this.manualResync}`
                 )
             }
 
@@ -70,11 +74,12 @@ class PlaybackNodeProcessor extends AudioWorkletProcessor {
         // Returning the sound at current position
         const output = outputs[0]
         const outputLength = output[0].length
+        const readPosition = applyManualResync(this.readPosition, this.manualResync)
         for (let channel = 0; channel < this.channelCount; channel++) {
             output[channel].set(
                 this.audioArrays[channel].subarray(
-                    this.readPosition,
-                    this.readPosition + outputLength
+                    readPosition,
+                    readPosition + outputLength
                 )
             )
         }

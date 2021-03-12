@@ -6,3 +6,6 @@ export const computeCurrentTime = (leaderSnapshot: Snapshot, timeDiff: number) =
     const adjustment = (Date.now() - timestampLocal)
     return leaderSnapshot.position + adjustment
 }
+
+export const applyManualResync = (currentTime: number, timeDiff: number) => 
+    currentTime - timeDiff
